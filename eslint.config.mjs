@@ -12,7 +12,7 @@ export default [
                 "error",
                 {
                     enforceBuildableLibDependency: true,
-                    allow: ["^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$"],
+                    allow: [String.raw`^.*/eslint(\.base)?\.config\.[cm]?[jt]s$`],
                     depConstraints: [
                         {
                             sourceTag: "*",
@@ -26,6 +26,14 @@ export default [
     {
         files: ["**/*.ts", "**/*.tsx", "**/*.cts", "**/*.mts", "**/*.js", "**/*.jsx", "**/*.cjs", "**/*.mjs"],
         // Override or add rules here
-        rules: {},
+        rules: {
+            "@stylistic/quotes": [
+                "error",
+                "double",
+                {
+                    avoidEscape: true,
+                },
+            ],
+        },
     },
 ];
