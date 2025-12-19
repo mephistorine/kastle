@@ -1,20 +1,45 @@
-<form [formGroup]="form" (submit.prevent)="setUp()">
+<form
+    tuiAppearance="floating"
+    tuiCardLarge
+    tuiForm="m"
+    [formGroup]="form"
+    (submit.prevent)="setUp()"
+>
+    <header tuiHeader>
+        <h2 tuiTitle>
+            App setting up
+        </h2>
+    </header>
     <tui-textfield>
         <label tuiLabel>Project URL</label>
-        <input tuiTextfield type="url" formControlName="projectUrl">
+        <input
+            type="url"
+            formControlName="projectUrl"
+            tuiTextfield
+        />
     </tui-textfield>
-
-
+    <tui-error
+        formControlName="projectUrl"
+        [error]="[] | tuiFieldError | async"
+    />
     <tui-textfield>
         <label tuiLabel>API Key</label>
-        <input tuiTextfield type="text" formControlName="apiKey">
+        <input
+            type="text"
+            formControlName="apiKey"
+            tuiTextfield
+        />
     </tui-textfield>
-
-    <button
-        size="m"
-        tuiButton
-        type="submit"
-    >
-        Start
-    </button>
+    <tui-error
+        formControlName="apiKey"
+        [error]="[] | tuiFieldError | async"
+    />
+    <footer>
+        <button
+            tuiButton
+            type="submit"
+        >
+            Set Up
+        </button>
+    </footer>
 </form>

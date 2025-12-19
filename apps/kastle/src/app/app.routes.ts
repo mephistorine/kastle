@@ -6,12 +6,16 @@ import {HomePage} from "./pages/home/home-page";
 import {injectSupabaseClient, SupabaseFactory} from "./supabase";
 import {inject} from "@angular/core";
 
-const isAppReadyGuard = () => {
+const appMustBeConfigured = () => {
     const supabaseFactory = inject(SupabaseFactory);
-    return supabaseFactory.isSupabaseConfigured;
+    const router = inject(Router)
+    if (supabaseFactory.isSupabaseConfigured) {
+        return true
+    }
+    return router.parseUrl("/set-up")
 };
 
-const isUserAuthedGuard = async () => {
+const isUserAuthed = async () => {
     const supabaseClient = injectSupabaseClient();
     const {data, error} = await supabaseClient.auth.getSession();
 
@@ -22,47 +26,57 @@ const isUserAuthedGuard = async () => {
     return data.session !== null;
 };
 
-const redirectOfAuthStatusGuard: CanActivateFn = async () => {
+const userMustBeUnlogged = async () => {
     const router = inject(Router);
-    const isAuthed = await isUserAuthedGuard();
+    const isAuthed = await isUserAuthed();
 
     if (isAuthed) {
-        return router.parseUrl("/");
+        return router.parseUrl("/")
     }
 
-    return router.parseUrl("/login");
-};
+    return true
+}
+
+const userMustBeLogged = async () => {
+    const router = inject(Router);
+    const isAuthed = await isUserAuthed();
+
+    if (isAuthed) {
+        return true
+    }
+
+    return router.parseUrl("/login")
+}
 
 export const appRoutes: Route[] = [
     {
+        path: "",
+        component: HomePage,
+        canActivate: [appMustBeConfigured, userMustBeLogged],
+        title: "Home"
+    },
+    {
         path: "login",
         component: LoginPage,
-        canActivate: [isAppReadyGuard, redirectOfAuthStatusGuard],
+        canActivate: [appMustBeConfigured, userMustBeUnlogged],
+        title: "Login"
     },
     {
         path: "register",
         component: RegisterPage,
-        canActivate: [isAppReadyGuard, redirectOfAuthStatusGuard],
+        canActivate: [appMustBeConfigured, userMustBeUnlogged],
+        title: "Registration"
     },
     {
         path: "set-up",
         component: SetUp,
         canActivate: [
-            () => {
-                const router = inject(Router);
-                const isAppSettedUp = isAppReadyGuard();
 
-                if (isAppSettedUp) {
-                    return router.parseUrl("/login");
-                }
-
-                return true;
-            },
         ],
+        title: "Set Up app"
     },
     {
-        path: "",
-        component: HomePage,
-        canActivate: [isAppReadyGuard, redirectOfAuthStatusGuard],
-    },
+        path: "**",
+        redirectTo: ""
+    }
 ];

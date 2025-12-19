@@ -4,7 +4,7 @@
     "private": true,
     "license": "MIT",
     "scripts": {
-        "start": "nx serve"
+        "start": "nx serve --port 4500"
     },
     "dependencies": {
         "@angular/animations": "^20.3.15",

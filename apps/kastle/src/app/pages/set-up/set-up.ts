@@ -1,18 +1,19 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
+import {FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,} from "@angular/forms";
 import {
-    FormsModule,
-    NonNullableFormBuilder,
-    ReactiveFormsModule,
-    Validators,
-} from "@angular/forms";
-import {
+    TuiAppearance,
     TuiButton,
+    TuiError,
     TuiLabel,
     TuiTextfieldComponent,
     TuiTextfieldDirective,
+    TuiTitle,
 } from "@taiga-ui/core";
 import {SupabaseFactory} from "../../supabase";
 import {Router} from "@angular/router";
+import {AsyncPipe} from "@angular/common";
+import {TuiCardLarge, TuiForm, TuiHeader} from "@taiga-ui/layout";
+import {TuiFieldErrorPipe} from "@taiga-ui/kit";
 
 @Component({
     selector: "app-set-up",
@@ -23,6 +24,14 @@ import {Router} from "@angular/router";
         TuiTextfieldComponent,
         TuiTextfieldDirective,
         TuiButton,
+        AsyncPipe,
+        TuiAppearance,
+        TuiCardLarge,
+        TuiError,
+        TuiFieldErrorPipe,
+        TuiForm,
+        TuiHeader,
+        TuiTitle,
     ],
     templateUrl: "./set-up.html",
     styleUrl: "./set-up.css",
@@ -31,7 +40,7 @@ import {Router} from "@angular/router";
 export class SetUp {
     private fb = inject(NonNullableFormBuilder);
     private supabaseFactory = inject(SupabaseFactory);
-    private router = inject(Router)
+    private router = inject(Router);
 
     form = this.fb.group({
         projectUrl: ["", Validators.required],
@@ -46,6 +55,6 @@ export class SetUp {
         const {projectUrl, apiKey} = this.form.value;
 
         this.supabaseFactory.createClient(projectUrl!, apiKey!);
-        this.router.navigateByUrl("/login")
+        this.router.navigateByUrl("/login");
     }
 }
