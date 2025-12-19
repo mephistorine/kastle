@@ -1,0 +1,20 @@
+<form [formGroup]="form" (submit.prevent)="setUp()">
+    <tui-textfield>
+        <label tuiLabel>Project URL</label>
+        <input tuiTextfield type="url" formControlName="projectUrl">
+    </tui-textfield>
+
+
+    <tui-textfield>
+        <label tuiLabel>API Key</label>
+        <input tuiTextfield type="text" formControlName="apiKey">
+    </tui-textfield>
+
+    <button
+        size="m"
+        tuiButton
+        type="submit"
+    >
+        Start
+    </button>
+</form>

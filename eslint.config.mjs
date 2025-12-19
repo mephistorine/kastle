@@ -36,4 +36,10 @@ export default [
             ],
         },
     },
+    {
+        files: ["*.html"],
+        rules: {
+            "@angular-eslint/template/label-has-associated-control": ["warn"],
+        },
+    },
 ];

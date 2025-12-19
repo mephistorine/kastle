@@ -1,0 +1,48 @@
+<form
+    tuiAppearance="floating"
+    tuiCardLarge
+    tuiForm="m"
+    [formGroup]="form"
+    (submit.prevent)="logIn()"
+>
+    <header tuiHeader>
+        <h2 tuiTitle>
+            Login
+        </h2>
+    </header>
+    <tui-textfield>
+        <label tuiLabel>Email</label>
+        <input
+            type="email"
+            formControlName="email"
+            placeholder="name@domain.com"
+            tuiTextfield
+        />
+    </tui-textfield>
+    <tui-error
+        formControlName="email"
+        [error]="[] | tuiFieldError | async"
+    />
+    <tui-textfield>
+        <label tuiLabel>Password</label>
+        <input
+            type="password"
+            formControlName="password"
+            tuiTextfield
+        />
+    </tui-textfield>
+    <tui-error
+        formControlName="password"
+        [error]="[] | tuiFieldError | async"
+    />
+    <footer>
+        <a tuiLink routerLink="/register">Register</a>
+
+        <button
+            tuiButton
+            type="submit"
+        >
+            Log in
+        </button>
+    </footer>
+</form>
