@@ -5,7 +5,7 @@ import {
     provideBrowserGlobalErrorListeners,
     provideZoneChangeDetection,
 } from "@angular/core";
-import {provideRouter, withDebugTracing} from "@angular/router";
+import {provideRouter, withComponentInputBinding} from "@angular/router";
 import {appRoutes} from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
         provideAnimations(),
         provideBrowserGlobalErrorListeners(),
         provideZoneChangeDetection({eventCoalescing: true}),
-        provideRouter(appRoutes, withDebugTracing()),
+        provideRouter(appRoutes, withComponentInputBinding()),
         provideEventPlugins(),
     ],
 };

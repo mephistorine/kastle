@@ -1,0 +1,18 @@
+:host {
+    display: flex;
+}
+
+aside {
+    height: 100dvh;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between !important;
+}
+
+.section-header .title {
+    text-transform: uppercase;
+    font: var(--tui-font-text-xs);
+    color: var(--tui-text-secondary);
+}

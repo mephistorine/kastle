@@ -1,0 +1,27 @@
+<nav tuiSubheader compact>
+    <div>
+
+    </div>
+
+    <a tuiButton routerLink="add">Add</a>
+</nav>
+
+<div class="entries-container">
+    @for (entry of entries.value(); track entry.id) {
+        <article tuiCardLarge tuiAppearance="floating">
+            <a tuiLink [routerLink]="['entries', entry.id]">
+                @if (entry.title) {
+                    <header tuiHeader>
+                        <h3 tuiTitle>{{entry.title}}</h3>
+                    </header>
+                }
+                <div>
+                    <tui-line-clamp
+                        [content]="entry.content"
+                        [linesLimit]="5"
+                    />
+                </div>
+            </a>
+        </article>
+    }
+</div>

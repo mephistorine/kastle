@@ -1,0 +1,11 @@
+<nav compact tuiSubheader>
+    <a routerLink="edit" tuiButton>Edit</a>
+</nav>
+
+@if (entry().title) {
+    <h2>{{entry().title}}</h2>
+}
+
+<div style="margin-block-start: 1rem">
+    {{entry().content}}
+</div>

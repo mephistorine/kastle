@@ -1,5 +1,5 @@
 import {TuiRoot} from "@taiga-ui/core";
-import {Component, inject} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {WA_WINDOW} from "@ng-web-apis/common";
 
@@ -8,6 +8,7 @@ import {WA_WINDOW} from "@ng-web-apis/common";
     selector: "app-root",
     templateUrl: "./app.html",
     styleUrl: "./app.css",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
     readonly isDark = inject(WA_WINDOW).matchMedia('(prefers-color-scheme: dark)').matches

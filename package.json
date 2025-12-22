@@ -6,6 +6,11 @@
     "scripts": {
         "start": "nx serve --port 4500"
     },
+    "overrides": {
+        "@supabase/supabase-js": {
+            "@supabase/auth-js": "2.61.0"
+        }
+    },
     "dependencies": {
         "@angular/animations": "^20.3.15",
         "@angular/cdk": "^20.2.14",
@@ -16,7 +21,7 @@
         "@angular/platform-browser": "~20.3.0",
         "@angular/platform-browser-dynamic": "~20.3.0",
         "@angular/router": "~20.3.0",
-        "@ng-web-apis/common": "4.12.2",
+        "@ng-web-apis/common": "^4.14.0",
         "@supabase/supabase-js": "^2.87.1",
         "@taiga-ui/addon-charts": "^4.64.0",
         "@taiga-ui/addon-mobile": "^4.64.0",
@@ -27,6 +32,7 @@
         "@taiga-ui/icons": "^4.64.0",
         "@taiga-ui/kit": "^4.64.0",
         "@taiga-ui/layout": "^4.64.0",
+        "ngxtension": "7.0.2",
         "rxjs": "~7.8.0",
         "zone.js": "~0.15.0"
     },
@@ -65,6 +71,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-preset-angular": "~14.6.1",
         "jest-util": "^29.7.0",
+        "ngxtension-plugin": "7.0.2",
         "nx": "22.2.3",
         "prettier": "^3.7.4",
         "ts-jest": "^29.1.0",
@@ -72,10 +79,5 @@
         "tslib": "^2.3.0",
         "typescript": "~5.9.2",
         "typescript-eslint": "^8.40.0"
-    },
-    "overrides": {
-        "@supabase/supabase-js": {
-            "@supabase/auth-js": "2.61.0"
-        }
     }
 }

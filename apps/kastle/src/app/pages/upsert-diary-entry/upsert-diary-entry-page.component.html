@@ -1,0 +1,38 @@
+<nav compact tuiSubheader>
+<!--    <button type="button" tuiIconButton iconStart="@tui.paperclip">
+        Attach file or image
+    </button>
+    <button
+        type="button"
+        tuiIconButton
+        iconStart="@tui.ellipsis"
+        [tuiDropdown]="entrySettingsDropdownContent"
+        [(tuiDropdownOpen)]="isExtraMenuOpened"
+    >
+        Entry settings
+
+        <ng-template
+            #entrySettingsDropdownContent
+            let-close
+        >
+            <tui-data-list>
+                <button type="button" tuiOption (click)="close()">Entry Date</button>
+            </tui-data-list>
+        </ng-template>
+    </button>-->
+    <button form="app-upsert-diary-entry-form" type="submit" tuiButton>Save</button>
+</nav>
+
+<form id="app-upsert-diary-entry-form" [formGroup]="form" (submit.prevent)="save()">
+    <tui-textfield>
+        <label tuiLabel>Title</label>
+        <input type="text" tuiTextfield formControlName="title">
+    </tui-textfield>
+    <tui-textfield>
+        <label tuiLabel>Content</label>
+        <textarea
+            tuiTextarea
+            formControlName="content"
+        ></textarea>
+    </tui-textfield>
+</form>
