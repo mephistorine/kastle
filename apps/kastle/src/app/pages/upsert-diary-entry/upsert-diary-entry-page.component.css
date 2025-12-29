@@ -1,0 +1,39 @@
+:host::ng-deep .ProseMirror {
+    min-height: 10lh;
+}
+
+:host::ng-deep .ProseMirror *:first-child {
+    margin-block-start: 0;
+}
+
+:host::ng-deep .ProseMirror *:last-child {
+    margin-block-end: 0;
+}
+
+:host::ng-deep .tiptap p.is-editor-empty:first-child::before {
+    color: var(--tui-text-secondary);
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-block-start: 1.5rem;
+}
+
+.entry-title-input {
+    font: var(--tui-font-heading-6);
+}
+
+.entry-title-input::ng-deep .t-placeholder {
+    color: var(--tui-text-secondary);
+}
+
+nav {
+    position: sticky;
+    top: 0 !important;
+}

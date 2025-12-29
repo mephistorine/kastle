@@ -1,15 +1,13 @@
-<div [style.display]="'flex'">
-    <aside
-        [tuiNavigationAside]="true"
-    >
-        <header>
-            <h2>Kastle</h2>
-        </header>
-        @for (diary of diaries.value(); track diary.id) {
-            <a tuiAsideItem [routerLink]="diary.id">{{diary.name}}</a>
-        }
-    </aside>
-    <main tuiNavigationMain>
-        <router-outlet />
-    </main>
-</div>
+<aside
+    [tuiNavigationAside]="true"
+>
+    <header>
+        <h2>Kastle</h2>
+    </header>
+    @for (diary of diaries.value(); track diary.id) {
+        <a tuiAsideItem [routerLink]="diary.id">{{diary.name}}</a>
+    }
+</aside>
+<main tuiNavigationMain>
+    <router-outlet />
+</main>

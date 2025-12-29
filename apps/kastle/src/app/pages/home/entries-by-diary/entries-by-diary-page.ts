@@ -1,9 +1,10 @@
 import {ChangeDetectionStrategy, Component, input, resource} from "@angular/core";
 import {TuiCard, TuiHeader, TuiNavigation} from "@taiga-ui/layout";
-import {TuiAppearance, TuiButton, TuiLink, TuiTitle} from "@taiga-ui/core";
+import {TuiAppearance, TuiButton, TuiLink, TuiTextfield, TuiTitle} from "@taiga-ui/core";
 import {RouterLink} from "@angular/router";
 import {injectSupabaseClient} from "../../../supabase";
 import {TuiLineClamp, tuiLineClampOptionsProvider} from "@taiga-ui/kit";
+import {DatePipe} from "@angular/common";
 
 @Component({
     selector: "app-entries-by-diary-page",
@@ -17,6 +18,8 @@ import {TuiLineClamp, tuiLineClampOptionsProvider} from "@taiga-ui/kit";
         TuiTitle,
         TuiLineClamp,
         TuiLink,
+        DatePipe,
+        TuiTextfield,
     ],
     templateUrl: "./entries-by-diary-page.html",
     styleUrl: "./entries-by-diary-page.css",

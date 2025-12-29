@@ -4,6 +4,7 @@
 
 aside {
     height: 100dvh;
+    top: 0 !important;
 }
 
 .section-header {

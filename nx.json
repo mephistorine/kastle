@@ -69,7 +69,8 @@
         },
         "@nx/angular:component": {
             "style": "css",
-            "changeDetection": "OnPush"
+            "changeDetection": "OnPush",
+            "type": "component"
         }
     }
 }

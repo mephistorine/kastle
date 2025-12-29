@@ -32,6 +32,11 @@
         "@taiga-ui/icons": "^4.64.0",
         "@taiga-ui/kit": "^4.64.0",
         "@taiga-ui/layout": "^4.64.0",
+        "@tiptap/core": "^3.14.0",
+        "@tiptap/extension-file-handler": "^3.14.0",
+        "@tiptap/extensions": "^3.14.0",
+        "@tiptap/starter-kit": "^3.14.0",
+        "ngx-tiptap": "^14.0.1",
         "ngxtension": "7.0.2",
         "rxjs": "~7.8.0",
         "zone.js": "~0.15.0"

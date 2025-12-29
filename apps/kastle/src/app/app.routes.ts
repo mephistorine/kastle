@@ -13,6 +13,7 @@ import {inject} from "@angular/core";
 import {UpsertDiaryEntryPage} from "./pages/upsert-diary-entry/upsert-diary-entry-page.component";
 import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
 import {EntryPage} from "./pages/home/entry-page/entry-page";
+import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
 
 const appMustBeConfigured = () => {
     const supabaseFactory = inject(SupabaseFactory);
@@ -64,11 +65,23 @@ export const appRoutes: Route[] = [
         title: "Home",
         children: [
             {
-                path: ":diaryId",
+                path: "",
+                component: HomeEmptyPage,
+            },
+            // TODO: add virtual all entries diary
+            /*{
+                path: "all"
+            },*/
+            {
+                path: ":diaryId/entries",
                 component: EntriesByDiaryPage,
             },
             {
-                path: ":diaryId/add",
+                path: ":diaryId",
+                redirectTo: ":diaryId/entries"
+            },
+            {
+                path: ":diaryId/entries/add",
                 component: UpsertDiaryEntryPage,
             },
             {
@@ -95,6 +108,10 @@ export const appRoutes: Route[] = [
                     },
                 },
             },
+            {
+                path: ":diaryId/entries/:entryId/edit",
+                component: UpsertDiaryEntryPage
+            }
         ],
     },
     {
