@@ -78,9 +78,9 @@ export const appRoutes: Route[] = [
             {
                 path: ":diaryId/entries/add",
                 component: UpsertDiaryEntryPageComponent,
-                data: {
+                resolve: {
                     entry: () => null,
-                    entryAttachmentIds: () => null,
+                    entryAttachmentPaths: () => [],
                 },
             },
             {

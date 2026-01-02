@@ -4,11 +4,12 @@ import {
     computed,
     DestroyRef,
     inject,
+    input,
     linkedSignal,
     numberAttribute,
     OnInit,
 } from "@angular/core";
-import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
+import {NonNullableFormBuilder, ReactiveFormsModule} from "@angular/forms";
 import {TiptapEditorDirective} from "ngx-tiptap";
 import {TuiInputInline, TuiSkeleton} from "@taiga-ui/kit";
 import {RouterLink} from "@angular/router";
@@ -25,17 +26,16 @@ import {
     debounceTime,
     defer,
     distinctUntilChanged,
-    filter,
     from,
     map,
-    mergeMap, startWith,
+    mergeMap,
+    startWith,
     switchMap,
     take,
 } from "rxjs";
 import {Tables} from "../../../database.types";
 import {nanoid} from "nanoid";
 import {IMAGE_ATTACH_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/image-attach-dialog.component";
-import {type IDBPDatabase} from "idb";
 import {injectIndexedDbOrThrow} from "../../local-db";
 
 function createFileLoaderByPath() {
@@ -72,7 +72,7 @@ function createFileLoaderByPath() {
         });
 
         return URL.createObjectURL(data);
-    }
+    };
 }
 
 @Component({
@@ -96,42 +96,41 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly tuiDialogService = inject(TuiDialogService);
     private readonly cache = injectIndexedDbOrThrow();
+    private readonly loadFileByPath = createFileLoaderByPath();
 
-    private readonly diaryId = injectParams("diaryId", {parse: numberAttribute});
-    private readonly entryData = injectRouteData<Tables<"entries">>("entry");
-    private readonly entryAttachmentPathsData =
-        injectRouteData<string[]>("entryAttachmentPaths");
+    private readonly diaryId = input.required()
+    private readonly entry = input.required<Tables<"entries"> | null>();
+    private readonly entryAttachmentPathsData = input.required<string[]>({
+        alias: "entryAttachmentPaths"
+    })
     private readonly diaryEntriesTable = this.supabaseClient.from("entries");
     private readonly diaryEntryAttachmentsTable =
         this.supabaseClient.from("entry_attachments");
-    readonly entryId = linkedSignal(() => this.entryData()?.id ?? null);
-    readonly entryAttachmentPaths = linkedSignal(
-        () => this.entryAttachmentPathsData() ?? [],
-    );
-    private loadFileByPath = createFileLoaderByPath()
+    readonly entryId = linkedSignal(() => this.entry()?.id ?? null);
+    readonly entryAttachmentPaths = linkedSignal(() => this.entryAttachmentPathsData());
 
     readonly backUrl = computed(() => `/diaries/${this.diaryId()}/entries`);
 
     readonly attachments = toSignal(
         defer(() =>
             toObservable(this.entryAttachmentPaths).pipe(
-                switchMap((paths) => {
-                    return combineLatest(
+                switchMap((paths) =>
+                    combineLatest(
                         paths.map((path) =>
                             from(this.loadFileByPath(path)).pipe(
                                 startWith({isLoading: true, url: ""}),
                                 map((url) => ({isLoading: false, url})),
                             ),
                         ),
-                    );
-                }),
+                    ),
+                ),
             ),
         ),
     );
 
     readonly form = this.nonNullableFormBuilder.group({
-        title: [""],
-        content: ["", Validators.minLength(1)],
+        title: "",
+        content: "",
     });
 
     readonly editor = new Editor({
@@ -146,7 +145,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
     });
 
     constructor() {
-        const startData = this.entryData();
+        const startData = this.entry();
         if (startData) {
             this.form.patchValue({
                 title: startData.title,
@@ -158,7 +157,6 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
     ngOnInit(): void {
         this.form.valueChanges
             .pipe(
-                filter(() => this.form.valid),
                 debounceTime(300),
                 distinctUntilChanged(
                     (prev, curr) =>
@@ -202,7 +200,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
                 mergeMap((files) => {
                     return files.map(async (file) => {
                         const filePath = await this.uploadImage(file);
-                        this.entryAttachmentPaths.update(prev => prev.concat(filePath));
+                        this.entryAttachmentPaths.update((prev) => prev.concat(filePath));
                         return this.diaryEntryAttachmentsTable.insert({
                             entry_id: this.entryId()!,
                             attachment_path: filePath,
@@ -255,7 +253,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
             await Promise.all([
                 store.add({
                     path: filePath,
-                    content: file
+                    content: file,
                 }),
                 this.supabaseClient.storage
                     .from("entries_attachments")
