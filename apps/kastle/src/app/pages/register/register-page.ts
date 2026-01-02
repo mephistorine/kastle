@@ -2,10 +2,13 @@ import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {
     TuiAppearance,
-    TuiButton, TuiError,
-    TuiLabel, TuiLink,
+    TuiButton,
+    TuiError,
+    TuiLabel,
+    TuiLink,
     TuiTextfieldComponent,
-    TuiTextfieldDirective, TuiTitle,
+    TuiTextfieldDirective,
+    TuiTitle,
 } from "@taiga-ui/core";
 import {injectSupabaseClient} from "../../supabase";
 import {AsyncPipe} from "@angular/common";
@@ -53,7 +56,7 @@ export class RegisterPage {
                 password: this.form.value.password!,
             })
             .then(({data, error}) => {
-                this.router.navigateByUrl("/login")
+                this.router.navigateByUrl("/login");
             });
     }
 }

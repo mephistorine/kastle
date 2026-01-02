@@ -1,87 +1,270 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnDestroy} from "@angular/core";
-import {TuiSubheaderCompactComponent} from "@taiga-ui/layout";
-import {TuiAppearance, TuiButton, TuiLink} from "@taiga-ui/core";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    linkedSignal,
+    numberAttribute,
+    OnInit,
+} from "@angular/core";
 import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
-import {injectSupabaseClient} from "../../supabase";
+import {TiptapEditorDirective} from "ngx-tiptap";
+import {TuiInputInline, TuiSkeleton} from "@taiga-ui/kit";
+import {RouterLink} from "@angular/router";
+import {TuiButton, TuiDialogService, TuiLink} from "@taiga-ui/core";
 import {injectParams} from "ngxtension/inject-params";
-import {Router, RouterLink} from "@angular/router";
 import {Editor} from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
-import {TiptapEditorDirective} from "ngx-tiptap";
 import {Placeholder} from "@tiptap/extensions";
-import {TuiFiles, TuiInputInline} from "@taiga-ui/kit";
+import {injectRouteData} from "ngxtension/inject-route-data";
+import {injectSupabaseClient} from "../../supabase";
+import {takeUntilDestroyed, toObservable, toSignal} from "@angular/core/rxjs-interop";
+import {
+    combineLatest,
+    debounceTime,
+    defer,
+    distinctUntilChanged,
+    filter,
+    from,
+    map,
+    mergeMap, startWith,
+    switchMap,
+    take,
+} from "rxjs";
+import {Tables} from "../../../database.types";
+import {nanoid} from "nanoid";
+import {IMAGE_ATTACH_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/image-attach-dialog.component";
+import {type IDBPDatabase} from "idb";
+import {injectIndexedDbOrThrow} from "../../local-db";
+
+function createFileLoaderByPath() {
+    const supabaseClient = injectSupabaseClient();
+    const destroyRef = inject(DestroyRef);
+    const cache = injectIndexedDbOrThrow();
+
+    return async (filePath: string) => {
+        const fileRecord = await cache.get("files", filePath);
+
+        if (fileRecord) {
+            return URL.createObjectURL(fileRecord.content);
+        }
+
+        const user = await supabaseClient.auth
+            .getSession()
+            .then(({data}) => data.session?.user ?? null);
+
+        if (!user) {
+            throw new Error("User is not authenticated");
+        }
+
+        const {data, error} = await supabaseClient.storage
+            .from("entries_attachments")
+            .download(`/${user!.id}/${filePath}`);
+
+        if (error) {
+            throw error;
+        }
+
+        await cache.add("files", {
+            path: filePath,
+            content: data,
+        });
+
+        return URL.createObjectURL(data);
+    }
+}
 
 @Component({
     selector: "app-upsert-diary-entry",
     imports: [
-        TuiButton,
-        TuiSubheaderCompactComponent,
         ReactiveFormsModule,
         TiptapEditorDirective,
         TuiInputInline,
         RouterLink,
         TuiLink,
-        TuiFiles,
-        TuiAppearance,
+        TuiButton,
+        TuiSkeleton,
     ],
     templateUrl: "./upsert-diary-entry-page.component.html",
     styleUrl: "./upsert-diary-entry-page.component.css",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UpsertDiaryEntryPage implements OnDestroy {
-    private readonly sbClient = injectSupabaseClient();
-    private readonly fb = inject(NonNullableFormBuilder);
-    private readonly router = inject(Router);
+export class UpsertDiaryEntryPageComponent implements OnInit {
+    private readonly nonNullableFormBuilder = inject(NonNullableFormBuilder);
+    private readonly supabaseClient = injectSupabaseClient();
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly tuiDialogService = inject(TuiDialogService);
+    private readonly cache = injectIndexedDbOrThrow();
 
-    private readonly diaryId = injectParams("diaryId");
+    private readonly diaryId = injectParams("diaryId", {parse: numberAttribute});
+    private readonly entryData = injectRouteData<Tables<"entries">>("entry");
+    private readonly entryAttachmentPathsData =
+        injectRouteData<string[]>("entryAttachmentPaths");
+    private readonly diaryEntriesTable = this.supabaseClient.from("entries");
+    private readonly diaryEntryAttachmentsTable =
+        this.supabaseClient.from("entry_attachments");
+    readonly entryId = linkedSignal(() => this.entryData()?.id ?? null);
+    readonly entryAttachmentPaths = linkedSignal(
+        () => this.entryAttachmentPathsData() ?? [],
+    );
+    private loadFileByPath = createFileLoaderByPath()
 
-    readonly backUrl = computed(() => `/diaries/${this.diaryId()}`);
+    readonly backUrl = computed(() => `/diaries/${this.diaryId()}/entries`);
 
-    editor = new Editor({
+    readonly attachments = toSignal(
+        defer(() =>
+            toObservable(this.entryAttachmentPaths).pipe(
+                switchMap((paths) => {
+                    return combineLatest(
+                        paths.map((path) =>
+                            from(this.loadFileByPath(path)).pipe(
+                                startWith({isLoading: true, url: ""}),
+                                map((url) => ({isLoading: false, url})),
+                            ),
+                        ),
+                    );
+                }),
+            ),
+        ),
+    );
+
+    readonly form = this.nonNullableFormBuilder.group({
+        title: [""],
+        content: ["", Validators.minLength(1)],
+    });
+
+    readonly editor = new Editor({
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                dropcursor: false,
+            }),
             Placeholder.configure({
                 placeholder: "Start writing…",
             }),
         ],
     });
 
-    readonly files = this.fb.control(null);
+    constructor() {
+        const startData = this.entryData();
+        if (startData) {
+            this.form.patchValue({
+                title: startData.title,
+                content: JSON.parse(startData.content),
+            });
+        }
+    }
 
-    readonly form = this.fb.group({
-        title: [""],
-        content: ["", Validators.required],
-    });
+    ngOnInit(): void {
+        this.form.valueChanges
+            .pipe(
+                filter(() => this.form.valid),
+                debounceTime(300),
+                distinctUntilChanged(
+                    (prev, curr) =>
+                        prev.title === curr.title && prev.content === prev.content,
+                ),
+                switchMap(() => this.saveEntry()),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
 
-    save() {
+    async saveEntry() {
         if (this.form.invalid) {
             return;
         }
 
-        const {title, content} = this.form.value;
+        if (this.entryId() === null) {
+            await this.createEntry();
+        }
 
-        this.sbClient.auth.getSession().then(({data}) => {
-            const userId = data.session?.user.id;
-            return this.sbClient
-                .from("entries")
-                .insert({
-                    title: title!,
-                    content: content!,
-                    diary_id: this.diaryId(),
-                    user_id: userId!,
-                })
-                .then(({error}) => {
-                    if (error) {
-                        console.error(error);
-                        return;
-                    }
+        const formVal = this.form.getRawValue();
 
-                    return this.router.navigateByUrl(this.backUrl());
-                });
-        });
+        const {error} = await this.diaryEntriesTable
+            .update(formVal)
+            .eq("id", this.entryId()!);
+
+        if (error) {
+            throw error;
+        }
     }
 
-    ngOnDestroy(): void {
-        this.editor.destroy();
+    async attachImages() {
+        if (this.entryId() === null) {
+            await this.createEntry();
+        }
+
+        this.tuiDialogService
+            .open<File[]>(IMAGE_ATTACH_DIALOG_COMPONENT_POLYMORPHEUS)
+            .pipe(
+                take(1),
+                mergeMap((files) => {
+                    return files.map(async (file) => {
+                        const filePath = await this.uploadImage(file);
+                        this.entryAttachmentPaths.update(prev => prev.concat(filePath));
+                        return this.diaryEntryAttachmentsTable.insert({
+                            entry_id: this.entryId()!,
+                            attachment_path: filePath,
+                        });
+                    });
+                }, 10),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe();
+    }
+
+    private async createEntry() {
+        if (this.form.invalid) {
+            throw new Error("Form is invalid");
+        }
+
+        const formVal = this.form.getRawValue();
+
+        const {data: entry, error} = await this.diaryEntriesTable
+            .insert({
+                ...formVal,
+                diary_id: this.diaryId()!,
+            })
+            .select()
+            .single();
+
+        if (error) {
+            throw error;
+        }
+
+        this.entryId.set(entry.id);
+    }
+
+    private async uploadImage(file: File) {
+        const user = await this.supabaseClient.auth
+            .getSession()
+            .then(({data}) => data.session?.user ?? null);
+
+        if (!user) {
+            return Promise.reject(new Error("User is not authenticated"));
+        }
+
+        const id = nanoid(10);
+        const [, extension] = file.name.split(".");
+        const filePath = `${id}.${extension}`;
+
+        const tx = this.cache.transaction("files", "readwrite");
+        const store = tx.objectStore("files");
+        try {
+            await Promise.all([
+                store.add({
+                    path: filePath,
+                    content: file
+                }),
+                this.supabaseClient.storage
+                    .from("entries_attachments")
+                    .upload(`${user.id}/${filePath}`, file),
+            ]);
+        } catch (e) {
+            tx.abort();
+        }
+
+        return filePath;
     }
 }

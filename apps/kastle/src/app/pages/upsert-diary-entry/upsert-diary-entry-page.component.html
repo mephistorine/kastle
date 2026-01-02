@@ -1,51 +1,53 @@
-<nav compact tuiSubheader>
-    <!--    <button type="button" tuiIconButton iconStart="@tui.paperclip">
-            Attach file or image
-        </button>
-        <button
-            type="button"
-            tuiIconButton
-            iconStart="@tui.ellipsis"
-            [tuiDropdown]="entrySettingsDropdownContent"
-            [(tuiDropdownOpen)]="isExtraMenuOpened"
-        >
-            Entry settings
+<nav>
+    <a
+        appearance="action-grayscale"
+        iconStart="chevron-left"
+        tuiLink
+        [routerLink]="backUrl()"
+    >
+        Back
+    </a>
 
-            <ng-template
-                #entrySettingsDropdownContent
-                let-close
-            >
-                <tui-data-list>
-                    <button type="button" tuiOption (click)="close()">Entry Date</button>
-                </tui-data-list>
-            </ng-template>
-        </button>-->
-    <a [routerLink]="backUrl()" tuiLink iconStart="chevron-left">Back</a>
+    <button
+        iconStart="image"
+        size="s"
+        tuiIconButton
+        type="button"
+        (click)="attachImages()"
+    >
+        Attach images
+    </button>
 
-    <!-- spacer -->
-    <div style="flex-grow: 1"></div>
-
-    <div>
-        <button tuiIconButton iconStart="paperclip" type="button">Attach image</button>
-        <button form="app-upsert-diary-entry-form" type="submit" tuiButton>Save</button>
-    </div>
+    <button
+        size="s"
+        tuiButton
+        type="button"
+        (click)="saveEntry()"
+    >
+        Save
+    </button>
 </nav>
 
-<form id="app-upsert-diary-entry-form" [formGroup]="form" (submit.prevent)="save()">
-    <!--    <label tuiInputFiles>
-            <input
-                accept="image/*"
-                tuiInputFiles
-                [formControl]="files"
-                [multiple]="true"
-                size="s"
-            />
-        </label>-->
-    <tui-input-inline class="entry-title-input">
-        Title
-        <input type="text" formControlName="title">
-    </tui-input-inline>
-    <div>
-        <tiptap-editor [editor]="editor" formControlName="content"/>
-    </div>
-</form>
+<div class="entry-attachments-container">
+    @for (attachment of attachments(); track attachment) {
+        @if (attachment.isLoading) {
+            <div [tuiSkeleton]="true" class="entry-attachment"></div>
+        } @else {
+            <img class="entry-attachment" [attr.src]="attachment.url" alt="">
+        }
+    }
+</div>
+
+<tui-input-inline class="entry-title-input">
+    Title
+    <input
+        type="text"
+        [formControl]="form.controls.title"
+    />
+</tui-input-inline>
+
+<tiptap-editor
+    outputFormat="json"
+    [editor]="editor"
+    [formControl]="form.controls.content"
+/>

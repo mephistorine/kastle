@@ -1,7 +1,10 @@
 :host {
     display: flex;
+    background-color: var(--tui-background-base-alt);
+    block-size: 100dvh;
 }
 
+/*
 aside {
     height: 100dvh;
     top: 0 !important;
@@ -16,4 +19,20 @@ aside {
     text-transform: uppercase;
     font: var(--tui-font-text-xs);
     color: var(--tui-text-secondary);
+}
+*/
+
+aside {
+    flex: none;
+    inline-size: 15rem;
+    margin-block: 1rem;
+    padding: 1rem;
+}
+
+main {
+    flex-grow: 1;
+    background-color: var(--tui-background-base);
+    margin: 1rem 1rem 1rem 0;
+    padding: 1rem;
+    border-radius: var(--tui-radius-m);
 }

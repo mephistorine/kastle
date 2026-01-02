@@ -1,6 +1,7 @@
 import {createClient, type SupabaseClient} from "@supabase/supabase-js";
 import {inject, Injectable} from "@angular/core";
 import {WA_LOCAL_STORAGE} from "@ng-web-apis/common";
+import {SupabaseTypes} from "../database.types";
 
 const KSTL_PROJECT_URL_KEY_NAME = "kstl__projectUrl";
 const KSTL_API_KEY_KEY_NAME = "kstl__apiKey";
@@ -10,7 +11,7 @@ const KSTL_API_KEY_KEY_NAME = "kstl__apiKey";
 })
 export class SupabaseFactory {
     private localStorage = inject(WA_LOCAL_STORAGE);
-    private client: SupabaseClient | null = null;
+    private client: SupabaseClient<SupabaseTypes> | null = null;
 
     get isSupabaseConfigured() {
         return this.client !== null;
@@ -25,7 +26,7 @@ export class SupabaseFactory {
         }
     }
 
-    getClientOrThrow(): SupabaseClient {
+    getClientOrThrow(): SupabaseClient<SupabaseTypes> {
         if (this.client) {
             return this.client;
         }
@@ -44,7 +45,7 @@ export class SupabaseFactory {
     }
 }
 
-export function injectSupabaseClient(): SupabaseClient {
+export function injectSupabaseClient(): SupabaseClient<SupabaseTypes> {
     const supabaseFactory = inject(SupabaseFactory);
     return supabaseFactory.getClientOrThrow();
 }

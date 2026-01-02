@@ -1,19 +1,14 @@
-import {
-    ActivatedRouteSnapshot,
-    Route,
-    Router,
-    RouterStateSnapshot,
-} from "@angular/router";
-import {LoginPage} from "./pages/login/login-page";
-import {RegisterPage} from "./pages/register/register-page";
-import {SetUp} from "./pages/set-up/set-up";
-import {HomePage} from "./pages/home/home-page";
-import {injectSupabaseClient, SupabaseFactory} from "./supabase";
 import {inject} from "@angular/core";
-import {UpsertDiaryEntryPage} from "./pages/upsert-diary-entry/upsert-diary-entry-page.component";
+import {ActivatedRouteSnapshot, Route, Router} from "@angular/router";
 import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
 import {EntryPage} from "./pages/home/entry-page/entry-page";
 import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
+import {HomePage} from "./pages/home/home-page";
+import {LoginPage} from "./pages/login/login-page";
+import {RegisterPage} from "./pages/register/register-page";
+import {SetUp} from "./pages/set-up/set-up";
+import {injectSupabaseClient, SupabaseFactory} from "./supabase";
+import {UpsertDiaryEntryPageComponent} from "./pages/upsert-diary-entry/upsert-diary-entry-page.component";
 
 const appMustBeConfigured = () => {
     const supabaseFactory = inject(SupabaseFactory);
@@ -78,19 +73,21 @@ export const appRoutes: Route[] = [
             },
             {
                 path: ":diaryId",
-                redirectTo: ":diaryId/entries"
+                redirectTo: ":diaryId/entries",
             },
             {
                 path: ":diaryId/entries/add",
-                component: UpsertDiaryEntryPage,
+                component: UpsertDiaryEntryPageComponent,
+                data: {
+                    entry: () => null,
+                    entryAttachmentIds: () => null,
+                },
             },
             {
                 path: ":diaryId/entries/:entryId",
                 component: EntryPage,
                 resolve: {
-                    entry: async (
-                        route: ActivatedRouteSnapshot,
-                    ) => {
+                    entry: async (route: ActivatedRouteSnapshot) => {
                         const {diaryId, entryId} = route.params;
                         const supabaseClient = injectSupabaseClient();
                         const session = await supabaseClient.auth
@@ -104,14 +101,36 @@ export const appRoutes: Route[] = [
                             .eq("diary_id", diaryId)
                             .eq("user_id", session!.user.id)
                             .single()
-                            .then(s => s.data)
+                            .then((s) => s.data);
                     },
                 },
             },
             {
                 path: ":diaryId/entries/:entryId/edit",
-                component: UpsertDiaryEntryPage
-            }
+                component: UpsertDiaryEntryPageComponent,
+                resolve: {
+                    entry: async (route: ActivatedRouteSnapshot) => {
+                        const {diaryId, entryId} = route.params;
+                        const supabaseClient = injectSupabaseClient();
+                        return supabaseClient
+                            .from("entries")
+                            .select()
+                            .eq("id", entryId)
+                            .eq("diary_id", diaryId)
+                            .single()
+                            .then(({data}) => data);
+                    },
+                    entryAttachmentPaths: async (route: ActivatedRouteSnapshot) => {
+                        const {entryId} = route.params;
+                        const supabaseClient = injectSupabaseClient();
+                        return supabaseClient
+                            .from("entry_attachments")
+                            .select("attachment_path")
+                            .eq("entry_id", entryId)
+                            .then((s) => s.data?.map((e) => e.attachment_path) ?? null);
+                    },
+                },
+            },
         ],
     },
     {

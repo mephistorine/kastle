@@ -1,5 +1,15 @@
+:host {
+    block-size: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-block: auto;
+    position: relative;
+}
+
 :host::ng-deep .ProseMirror {
-    min-height: 10lh;
+    min-block-size: 10lh;
+    block-size: 100%;
 }
 
 :host::ng-deep .ProseMirror *:first-child {
@@ -22,7 +32,6 @@ form {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin-block-start: 1.5rem;
 }
 
 .entry-title-input {
@@ -33,7 +42,30 @@ form {
     color: var(--tui-text-secondary);
 }
 
-nav {
-    position: sticky;
-    top: 0 !important;
+:host.is-drag-active .drop-here-overlay {
+    display: block;
+}
+
+.drop-here-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    background: #ffffff38;
+    border: 1px dashed white;
+    box-sizing: border-box;
+    display: none;
+}
+
+.entry-attachment {
+    inline-size: 250px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.entry-attachments-container {
+    display: flex;
+    gap: 0.5rem;
+    overflow-inline: auto;
 }

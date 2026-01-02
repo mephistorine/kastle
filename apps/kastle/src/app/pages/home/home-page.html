@@ -1,13 +1,16 @@
-<aside
-    [tuiNavigationAside]="true"
->
-    <header>
-        <h2>Kastle</h2>
-    </header>
+<aside>
+    <div>Diaries</div>
+
     @for (diary of diaries.value(); track diary.id) {
-        <a tuiAsideItem [routerLink]="diary.id">{{diary.name}}</a>
+        <a
+            tuiLink
+            [routerLink]="diary.id"
+        >
+            {{ diary.name }}
+        </a>
     }
 </aside>
-<main tuiNavigationMain>
+
+<main>
     <router-outlet />
 </main>

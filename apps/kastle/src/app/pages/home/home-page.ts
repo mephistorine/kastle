@@ -1,8 +1,15 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit, resource} from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    resource,
+} from "@angular/core";
 import {injectSupabaseClient} from "../../supabase";
 import {NonNullableFormBuilder, ReactiveFormsModule} from "@angular/forms";
 import {TuiAsideComponent, TuiNavigation} from "@taiga-ui/layout";
 import {RouterLink, RouterOutlet} from "@angular/router";
+import {TuiLink} from "@taiga-ui/core";
 
 @Component({
     selector: "app-home-page",
@@ -12,6 +19,7 @@ import {RouterLink, RouterOutlet} from "@angular/router";
         TuiNavigation,
         RouterOutlet,
         RouterLink,
+        TuiLink,
     ],
     templateUrl: "./home-page.html",
     styleUrl: "./home-page.css",

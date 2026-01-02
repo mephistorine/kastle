@@ -1,5 +1,10 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
-import {FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,} from "@angular/forms";
+import {
+    FormsModule,
+    NonNullableFormBuilder,
+    ReactiveFormsModule,
+    Validators,
+} from "@angular/forms";
 import {
     TuiAppearance,
     TuiButton,

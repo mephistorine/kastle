@@ -1,20 +1,27 @@
-<nav tuiSubheader compact>
+<nav>
     <h2>Primary</h2>
 
-    <a tuiButton routerLink="add">Add</a>
-
-    <tui-textfield iconStart="search">
-        <input type="search" tuiTextfield placeholder="Search...">
-    </tui-textfield>
+    <a
+        routerLink="add"
+        tuiButton
+    >
+        Add
+    </a>
 </nav>
 
 <div class="entries-container">
     @for (entry of entries.value(); track entry.id) {
-        <article tuiCardLarge tuiAppearance="floating">
-            <a tuiLink [routerLink]="entry.id">
+        <article
+            tuiAppearance="floating"
+            tuiCardLarge
+        >
+            <a
+                tuiLink
+                [routerLink]="entry.id.toString()"
+            >
                 @if (entry.title) {
                     <header tuiHeader>
-                        <h3 tuiTitle>{{entry.title}}</h3>
+                        <h3 tuiTitle>{{ entry.title }}</h3>
                     </header>
                 }
                 <div>
@@ -24,7 +31,7 @@
                     />
                 </div>
                 <footer>
-                    {{entry.created_at | date: "EEEE, MMM d"}}
+                    {{ entry.created_at | date: "EEEE, MMM d" }}
                 </footer>
             </a>
         </article>

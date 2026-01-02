@@ -1,5 +1,14 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
-import {TuiAppearance, TuiButton, TuiError, TuiLabel, TuiLink, TuiTextfieldComponent, TuiTextfieldDirective, TuiTitle} from "@taiga-ui/core";
+import {
+    TuiAppearance,
+    TuiButton,
+    TuiError,
+    TuiLabel,
+    TuiLink,
+    TuiTextfieldComponent,
+    TuiTextfieldDirective,
+    TuiTitle,
+} from "@taiga-ui/core";
 import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {TuiFieldErrorPipe} from "@taiga-ui/kit";
 import {AsyncPipe} from "@angular/common";
@@ -53,7 +62,7 @@ export class LoginPage {
                 password: password!,
             })
             .then(() => {
-                this.router.navigateByUrl("/")
+                this.router.navigateByUrl("/");
             });
     }
 }

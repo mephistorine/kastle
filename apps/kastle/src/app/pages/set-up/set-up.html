@@ -6,16 +6,14 @@
     (submit.prevent)="setUp()"
 >
     <header tuiHeader>
-        <h2 tuiTitle>
-            App setting up
-        </h2>
+        <h2 tuiTitle>App setting up</h2>
     </header>
     <tui-textfield>
         <label tuiLabel>Project URL</label>
         <input
-            type="url"
             formControlName="projectUrl"
             tuiTextfield
+            type="url"
         />
     </tui-textfield>
     <tui-error
@@ -25,9 +23,9 @@
     <tui-textfield>
         <label tuiLabel>API Key</label>
         <input
-            type="text"
             formControlName="apiKey"
             tuiTextfield
+            type="text"
         />
     </tui-textfield>
     <tui-error

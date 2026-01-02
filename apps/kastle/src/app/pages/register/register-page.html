@@ -6,17 +6,15 @@
     (submit.prevent)="register()"
 >
     <header tuiHeader>
-        <h2 tuiTitle>
-            Registration
-        </h2>
+        <h2 tuiTitle>Registration</h2>
     </header>
     <tui-textfield>
         <label tuiLabel>Email</label>
         <input
-            type="email"
             formControlName="email"
             placeholder="name@domain.com"
             tuiTextfield
+            type="email"
         />
     </tui-textfield>
     <tui-error
@@ -26,9 +24,9 @@
     <tui-textfield>
         <label tuiLabel>Password</label>
         <input
-            type="password"
             formControlName="password"
             tuiTextfield
+            type="password"
         />
     </tui-textfield>
     <tui-error
@@ -36,7 +34,12 @@
         [error]="[] | tuiFieldError | async"
     />
     <footer>
-        <a tuiLink routerLink="/login">Log in</a>
+        <a
+            routerLink="/login"
+            tuiLink
+        >
+            Log in
+        </a>
 
         <button
             tuiButton

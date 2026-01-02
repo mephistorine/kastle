@@ -11,5 +11,6 @@ import {WA_WINDOW} from "@ng-web-apis/common";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-    readonly isDark = inject(WA_WINDOW).matchMedia('(prefers-color-scheme: dark)').matches
+    readonly isDark = inject(WA_WINDOW).matchMedia("(prefers-color-scheme: dark)")
+        .matches;
 }

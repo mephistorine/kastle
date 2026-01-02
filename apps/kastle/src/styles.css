@@ -1,8 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
-    --tui-font-heading: -apple-system, "BlinkMacSystemFont", system-ui, "Roboto", "Segoe UI", "Helvetica Neue", sans-serif;
+    --tui-font-heading:
+        -apple-system, "BlinkMacSystemFont", system-ui, "Roboto", "Segoe UI", "Helvetica Neue", sans-serif;
     --tui-font-text: -apple-system, "BlinkMacSystemFont", system-ui, "Roboto", "Segoe UI", "Helvetica Neue", sans-serif;
-    font-size: 18px;
+    /*--tui-font-offset: 0.125rem;*/
 }
 
 router-outlet {
