@@ -1,0 +1,11 @@
+.entry-attachments-container {
+    display: flex;
+    gap: 0.5rem;
+    overflow-inline: auto;
+}
+
+.entry-attachment {
+    block-size: 300px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}

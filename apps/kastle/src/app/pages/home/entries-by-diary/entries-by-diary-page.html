@@ -1,39 +1,24 @@
-<nav>
-    <h2>Primary</h2>
+<header tuiHeader="h5">
+    <hgroup tuiTitle>
+        <h3>{{diary().name}}</h3>
+    </hgroup>
 
-    <a
-        routerLink="add"
-        tuiButton
-    >
-        Add
-    </a>
-</nav>
+    <aside tuiAccessories>
+        <a
+            routerLink="add"
+            tuiButton
+            size="s"
+        >
+            Add
+        </a>
+    </aside>
+</header>
 
 <div class="entries-container">
-    @for (entry of entries.value(); track entry.id) {
-        <article
-            tuiAppearance="floating"
-            tuiCardLarge
-        >
-            <a
-                tuiLink
-                [routerLink]="entry.id.toString()"
-            >
-                @if (entry.title) {
-                    <header tuiHeader>
-                        <h3 tuiTitle>{{ entry.title }}</h3>
-                    </header>
-                }
-                <div>
-                    <tui-line-clamp
-                        [content]="entry.content"
-                        [linesLimit]="5"
-                    />
-                </div>
-                <footer>
-                    {{ entry.created_at | date: "EEEE, MMM d" }}
-                </footer>
-            </a>
-        </article>
+
+    @for (entry of entries(); track entry.id) {
+        <app-entry-card
+            [entry]="entry"
+        />
     }
 </div>

@@ -6,7 +6,6 @@ import {
     inject,
     input,
     linkedSignal,
-    numberAttribute,
     OnInit,
 } from "@angular/core";
 import {NonNullableFormBuilder, ReactiveFormsModule} from "@angular/forms";
@@ -14,11 +13,9 @@ import {TiptapEditorDirective} from "ngx-tiptap";
 import {TuiInputInline, TuiSkeleton} from "@taiga-ui/kit";
 import {RouterLink} from "@angular/router";
 import {TuiButton, TuiDialogService, TuiLink} from "@taiga-ui/core";
-import {injectParams} from "ngxtension/inject-params";
 import {Editor} from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import {Placeholder} from "@tiptap/extensions";
-import {injectRouteData} from "ngxtension/inject-route-data";
 import {injectSupabaseClient} from "../../supabase";
 import {takeUntilDestroyed, toObservable, toSignal} from "@angular/core/rxjs-interop";
 import {
@@ -37,43 +34,7 @@ import {Tables} from "../../../database.types";
 import {nanoid} from "nanoid";
 import {IMAGE_ATTACH_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/image-attach-dialog.component";
 import {injectIndexedDbOrThrow} from "../../local-db";
-
-function createFileLoaderByPath() {
-    const supabaseClient = injectSupabaseClient();
-    const destroyRef = inject(DestroyRef);
-    const cache = injectIndexedDbOrThrow();
-
-    return async (filePath: string) => {
-        const fileRecord = await cache.get("files", filePath);
-
-        if (fileRecord) {
-            return URL.createObjectURL(fileRecord.content);
-        }
-
-        const user = await supabaseClient.auth
-            .getSession()
-            .then(({data}) => data.session?.user ?? null);
-
-        if (!user) {
-            throw new Error("User is not authenticated");
-        }
-
-        const {data, error} = await supabaseClient.storage
-            .from("entries_attachments")
-            .download(`/${user!.id}/${filePath}`);
-
-        if (error) {
-            throw error;
-        }
-
-        await cache.add("files", {
-            path: filePath,
-            content: data,
-        });
-
-        return URL.createObjectURL(data);
-    };
-}
+import {FileLoaderService} from "../../file-loader";
 
 @Component({
     selector: "app-upsert-diary-entry",
@@ -96,13 +57,13 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly tuiDialogService = inject(TuiDialogService);
     private readonly cache = injectIndexedDbOrThrow();
-    private readonly loadFileByPath = createFileLoaderByPath();
+    private readonly fileLoader = inject(FileLoaderService);
 
-    private readonly diaryId = input.required()
-    private readonly entry = input.required<Tables<"entries"> | null>();
-    private readonly entryAttachmentPathsData = input.required<string[]>({
-        alias: "entryAttachmentPaths"
-    })
+    readonly diaryId = input.required<number>();
+    readonly entry = input.required<Tables<"entries"> | null>();
+    readonly entryAttachmentPathsData = input.required<string[]>({
+        alias: "entryAttachmentPaths",
+    });
     private readonly diaryEntriesTable = this.supabaseClient.from("entries");
     private readonly diaryEntryAttachmentsTable =
         this.supabaseClient.from("entry_attachments");
@@ -117,7 +78,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
                 switchMap((paths) =>
                     combineLatest(
                         paths.map((path) =>
-                            from(this.loadFileByPath(path)).pipe(
+                            from(this.fileLoader.loadFileByPath(path)).pipe(
                                 startWith({isLoading: true, url: ""}),
                                 map((url) => ({isLoading: false, url})),
                             ),
@@ -144,7 +105,9 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
         ],
     });
 
-    constructor() {
+    constructor() {}
+
+    ngOnInit(): void {
         const startData = this.entry();
         if (startData) {
             this.form.patchValue({
@@ -152,9 +115,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
                 content: JSON.parse(startData.content),
             });
         }
-    }
 
-    ngOnInit(): void {
         this.form.valueChanges
             .pipe(
                 debounceTime(300),

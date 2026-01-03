@@ -1,24 +1,14 @@
-import {ChangeDetectionStrategy, Component, input, resource} from "@angular/core";
-import {TuiCard, TuiHeader} from "@taiga-ui/layout";
-import {TuiAppearance, TuiButton, TuiLink, TuiTitle} from "@taiga-ui/core";
+import {ChangeDetectionStrategy, Component, input} from "@angular/core";
+import {TuiHeader} from "@taiga-ui/layout";
+import {TuiButton, TuiTitle} from "@taiga-ui/core";
 import {RouterLink} from "@angular/router";
-import {injectSupabaseClient} from "../../../supabase";
-import {TuiLineClamp, tuiLineClampOptionsProvider} from "@taiga-ui/kit";
-import {DatePipe} from "@angular/common";
+import {tuiLineClampOptionsProvider} from "@taiga-ui/kit";
+import {Tables} from "../../../../database.types";
+import {EntryCardComponent} from "../../../components/entry-card.component";
 
 @Component({
     selector: "app-entries-by-diary-page",
-    imports: [
-        TuiButton,
-        RouterLink,
-        TuiCard,
-        TuiAppearance,
-        TuiHeader,
-        TuiTitle,
-        TuiLineClamp,
-        TuiLink,
-        DatePipe,
-    ],
+    imports: [TuiButton, RouterLink, TuiHeader, TuiTitle, EntryCardComponent],
     templateUrl: "./entries-by-diary-page.html",
     styleUrl: "./entries-by-diary-page.css",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,24 +19,6 @@ import {DatePipe} from "@angular/common";
     ],
 })
 export class EntriesByDiaryPage {
-    private readonly supabaseClient = injectSupabaseClient();
-
-    readonly diaryId = input.required<number>();
-
-    readonly entries = resource({
-        params: () => ({diaryId: this.diaryId()}),
-        loader: async ({params}) => {
-            const session = await this.supabaseClient.auth
-                .getSession()
-                .then(({data}) => data.session);
-
-            const {data} = await this.supabaseClient
-                .from("entries")
-                .select()
-                .eq("diary_id", params.diaryId)
-                .eq("user_id", session!.user.id);
-            return data;
-        },
-        defaultValue: [],
-    });
+    readonly diary = input.required<Tables<"diaries">>();
+    readonly entries = input.required<any[]>();
 }

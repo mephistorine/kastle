@@ -1,0 +1,41 @@
+<header tuiHeader="h5">
+    <div tuiAccessories>
+        <a
+            appearance="action-grayscale"
+            iconStart="chevron-left"
+            tuiLink
+            [routerLink]="backUrl()"
+        >
+            Back
+        </a>
+        <a
+            tuiButton
+            size="s"
+            [routerLink]="editUrl()"
+        >
+            Edit
+        </a>
+    </div>
+</header>
+
+<div class="entry-attachments-container">
+    @for (attachment of attachments(); track $index) {
+        @if (attachment.isLoading) {
+            <div
+                class="entry-attachment"
+                [tuiSkeleton]="true"
+            ></div>
+        } @else {
+            <img
+                class="entry-attachment"
+                [attr.src]="attachment.url"
+            />
+        }
+    }
+</div>
+
+@if (entry().title) {
+    <h4 class="title">{{ entry().title }}</h4>
+}
+
+<div [innerHTML]="content()"></div>

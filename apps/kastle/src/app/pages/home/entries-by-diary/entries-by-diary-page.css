@@ -4,3 +4,12 @@
     gap: 1rem;
     margin-block-start: 1rem;
 }
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+.diary-name {
+    margin: 0;
+}

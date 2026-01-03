@@ -33,6 +33,7 @@ main {
     flex-grow: 1;
     background-color: var(--tui-background-base);
     margin: 1rem 1rem 1rem 0;
-    padding: 1rem;
+    /*padding: 1rem;*/
     border-radius: var(--tui-radius-m);
+    overflow-block: auto;
 }

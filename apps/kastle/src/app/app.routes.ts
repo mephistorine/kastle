@@ -1,7 +1,7 @@
 import {inject} from "@angular/core";
 import {ActivatedRouteSnapshot, Route, Router} from "@angular/router";
 import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
-import {EntryPage} from "./pages/home/entry-page/entry-page";
+import {EntryPageComponent} from "./pages/home/entry-page/entry-page.component";
 import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
 import {HomePage} from "./pages/home/home-page";
 import {LoginPage} from "./pages/login/login-page";
@@ -63,13 +63,64 @@ export const appRoutes: Route[] = [
                 path: "",
                 component: HomeEmptyPage,
             },
-            // TODO: add virtual all entries diary
+            // TODO: add virtual diary for all entries
             /*{
                 path: "all"
             },*/
             {
                 path: ":diaryId/entries",
                 component: EntriesByDiaryPage,
+                resolve: {
+                    diary: async (route: ActivatedRouteSnapshot) => {
+                        const supabaseClient = injectSupabaseClient();
+                        const {diaryId} = route.params;
+                        return supabaseClient
+                            .from("diaries")
+                            .select()
+                            .eq("id", diaryId)
+                            .single()
+                            .then(s => s.data)
+                    },
+                    entries: async (route: ActivatedRouteSnapshot) => {
+                        const supabaseClient = injectSupabaseClient();
+                        const {diaryId} = route.params;
+                        const {data: entries, error: entriesError} = await supabaseClient
+                            .from("entries")
+                            .select()
+                            .eq("diary_id", diaryId)
+                            .order("created_at", {ascending: false})
+
+                        if (entriesError !== null) {
+                            throw entriesError;
+                        }
+
+                        const {data: attachments, error: entryAttachmentsError} = await supabaseClient
+                            .from("entry_attachments")
+                            .select("entry_id, attachment_path")
+                            .in("entry_id", entries.map(e => e.id));
+
+                        if (entryAttachmentsError !== null) {
+                            throw entryAttachmentsError;
+                        }
+
+                        const attachmentPathsByEntryId = new Map<number, string[]>()
+
+                        attachments?.forEach(attachment => {
+                            if (attachmentPathsByEntryId.has(attachment.entry_id)) {
+                                attachmentPathsByEntryId.get(attachment.entry_id)?.push(attachment.attachment_path)
+                            } else {
+                                attachmentPathsByEntryId.set(attachment.entry_id, [attachment.attachment_path])
+                            }
+                        })
+
+                        return entries?.map((entry) => {
+                            return {
+                                ...entry,
+                                attachmentPaths: attachmentPathsByEntryId.get(entry.id) ?? []
+                            }
+                        });
+                    }
+                }
             },
             {
                 path: ":diaryId",
@@ -85,23 +136,34 @@ export const appRoutes: Route[] = [
             },
             {
                 path: ":diaryId/entries/:entryId",
-                component: EntryPage,
+                component: EntryPageComponent,
                 resolve: {
                     entry: async (route: ActivatedRouteSnapshot) => {
                         const {diaryId, entryId} = route.params;
                         const supabaseClient = injectSupabaseClient();
-                        const session = await supabaseClient.auth
-                            .getSession()
-                            .then((s) => s.data.session);
 
-                        return supabaseClient
+                        const {data: attachments, error: entryAttachmentsError} = await supabaseClient.from("entry_attachments")
+                            .select("attachment_path")
+                            .eq("entry_id", entryId);
+
+                        if (entryAttachmentsError) {
+                            throw entryAttachmentsError;
+                        }
+
+                        const {data: entry, error: entriesError} = await supabaseClient
                             .from("entries")
                             .select()
                             .eq("id", entryId)
                             .eq("diary_id", diaryId)
-                            .eq("user_id", session!.user.id)
-                            .single()
-                            .then((s) => s.data);
+                            .single();
+
+                        if (entriesError) {
+                            throw entriesError;
+                        }
+
+                        Reflect.set(entry, "attachmentPaths", attachments?.map(d => d.attachment_path))
+
+                        return entry;
                     },
                 },
             },
