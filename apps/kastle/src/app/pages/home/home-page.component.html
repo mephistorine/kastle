@@ -1,16 +1,16 @@
 <aside>
     <div>Diaries</div>
 
-    @for (diary of diaries.value(); track diary.id) {
+    @for (diary of diaries(); track diary.id) {
         <a
             tuiLink
-            [routerLink]="diary.id"
+            [routerLink]="diary.id.toString()"
         >
             {{ diary.name }}
         </a>
     }
 </aside>
 
-<main>
+<main class="container">
     <router-outlet />
 </main>

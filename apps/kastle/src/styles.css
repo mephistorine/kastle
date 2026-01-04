@@ -14,10 +14,28 @@ router-outlet {
     display: none;
 }
 
+.entry-content p {
+    margin-block: 0.7em;
+}
+
 .entry-content > *:first-child {
     margin-block-start: 0;
 }
 
 .entry-content > *:last-child {
     margin-block-end: 0;
+}
+
+.container {
+    --container-max-width: 1440px;
+    --container-min-field: 16px;
+    display: grid;
+    grid-template-columns:
+      minmax(var(--container-min-field), 1fr)
+      minmax(0, var(--container-max-width))
+      minmax(var(--container-min-field), 1fr);
+}
+
+.container > * {
+    grid-column: 2 / 3;
 }

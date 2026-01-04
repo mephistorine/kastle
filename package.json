@@ -38,6 +38,7 @@
         "@tiptap/extension-file-handler": "^3.14.0",
         "@tiptap/extensions": "^3.14.0",
         "@tiptap/starter-kit": "^3.14.0",
+        "es-toolkit": "^1.43.0",
         "idb": "^8.0.3",
         "nanoid": "^5.1.6",
         "ngx-tiptap": "^14.0.1",

@@ -11,7 +11,7 @@ import {
 import {NonNullableFormBuilder, ReactiveFormsModule} from "@angular/forms";
 import {TiptapEditorDirective} from "ngx-tiptap";
 import {TuiInputInline, TuiSkeleton} from "@taiga-ui/kit";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {TuiButton, TuiDialogService, TuiLink} from "@taiga-ui/core";
 import {Editor} from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
@@ -35,6 +35,7 @@ import {nanoid} from "nanoid";
 import {IMAGE_ATTACH_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/image-attach-dialog.component";
 import {injectIndexedDbOrThrow} from "../../local-db";
 import {FileLoaderService} from "../../file-loader";
+import {isEqual} from "es-toolkit";
 
 @Component({
     selector: "app-upsert-diary-entry",
@@ -58,6 +59,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
     private readonly tuiDialogService = inject(TuiDialogService);
     private readonly cache = injectIndexedDbOrThrow();
     private readonly fileLoader = inject(FileLoaderService);
+    private readonly router = inject(Router);
 
     readonly diaryId = input.required<number>();
     readonly entry = input.required<Tables<"entries"> | null>();
@@ -91,7 +93,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
 
     readonly form = this.nonNullableFormBuilder.group({
         title: "",
-        content: "",
+        content: {type: "doc", content: []},
     });
 
     readonly editor = new Editor({
@@ -119,10 +121,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
         this.form.valueChanges
             .pipe(
                 debounceTime(300),
-                distinctUntilChanged(
-                    (prev, curr) =>
-                        prev.title === curr.title && prev.content === prev.content,
-                ),
+                distinctUntilChanged(isEqual),
                 switchMap(() => this.saveEntry()),
                 takeUntilDestroyed(this.destroyRef),
             )
@@ -141,12 +140,20 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
         const formVal = this.form.getRawValue();
 
         const {error} = await this.diaryEntriesTable
-            .update(formVal)
+            .update({
+                title: formVal.title,
+                content: JSON.stringify(formVal.content)
+            })
             .eq("id", this.entryId()!);
 
         if (error) {
             throw error;
         }
+    }
+
+    async saveEntryAndGoBack() {
+        await this.saveEntry();
+        await this.router.navigateByUrl(this.backUrl());
     }
 
     async attachImages() {
@@ -182,7 +189,8 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
 
         const {data: entry, error} = await this.diaryEntriesTable
             .insert({
-                ...formVal,
+                title: formVal.title,
+                content: JSON.stringify(formVal.content),
                 diary_id: this.diaryId()!,
             })
             .select()

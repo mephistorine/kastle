@@ -3,7 +3,7 @@ import {ActivatedRouteSnapshot, Route, Router} from "@angular/router";
 import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
 import {EntryPageComponent} from "./pages/home/entry-page/entry-page.component";
 import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
-import {HomePage} from "./pages/home/home-page";
+import {HomePageComponent} from "./pages/home/home-page.component";
 import {LoginPage} from "./pages/login/login-page";
 import {RegisterPage} from "./pages/register/register-page";
 import {SetUp} from "./pages/set-up/set-up";
@@ -55,9 +55,21 @@ const userMustBeLogged = async () => {
 export const appRoutes: Route[] = [
     {
         path: "diaries",
-        component: HomePage,
+        component: HomePageComponent,
         canActivate: [appMustBeConfigured, userMustBeLogged],
         title: "Home",
+        resolve: {
+            diaries: async (route: ActivatedRouteSnapshot) => {
+                const supabaseClient = injectSupabaseClient();
+                const {data, error} = await supabaseClient.from("diaries").select();
+
+                if (error) {
+                    throw error;
+                }
+
+                return data;
+            }
+        },
         children: [
             {
                 path: "",
