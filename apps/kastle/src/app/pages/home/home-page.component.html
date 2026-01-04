@@ -1,16 +1,76 @@
 <aside>
-    <div>Diaries</div>
+    <header class="aside-header" tuiHeader="h4">
+        <hgroup tuiTitle>
+            <h1>Kastle</h1>
+        </hgroup>
 
-    @for (diary of diaries(); track diary.id) {
-        <a
-            tuiLink
-            [routerLink]="diary.id.toString()"
+        <!-- TODO: Add sidebar collapse button -->
+        <!--        <button tuiIconButton iconStart="panel-left-close" type="button" appearance="flat-grayscale" size="m">Close sidebar</button>-->
+    </header>
+
+    <section class="diaries">
+        <header tuiHeader="body-m">
+            <hgroup tuiTitle>
+                <h4>Diaries</h4>
+            </hgroup>
+
+            <div tuiAccessories>
+                <button type="button" tuiIconButton appearance="flat-grayscale" size="s" iconStart="plus"
+                        (click)="openDiaryUpsertDialog()">Add new diary
+                </button>
+            </div>
+        </header>
+
+        <nav class="diaries-nav">
+            @for (diary of diaryLinks(); track diary.id) {
+                <a
+                    tuiButton
+                    [iconStart]="diary.icon"
+                    size="s"
+                    appearance="flat-grayscale"
+                    [routerLink]="diary.url"
+                >
+                    {{ diary.name }}
+                </a>
+            }
+        </nav>
+    </section>
+
+    <section class="profile">
+        <a tuiButton iconStart="settings" [routerLink]="settingsUrl" appearance="flat-grayscale"
+           size="m">Settings</a>
+
+        <button
+            appearance="flat-grayscale"
+            size="m"
+            tuiDropdownOpen
+            tuiButton
+            type="button"
+            [tuiDropdown]="menu"
         >
-            {{ diary.name }}
-        </a>
-    }
+            <tui-avatar
+                size="xs"
+                src="https://avatars.githubusercontent.com/u/11832552"
+            />
+
+            <span>Sam Bulatov</span>
+
+            <ng-template #menu>
+                <tui-data-list>
+                    <button
+                        iconStart="bookmark"
+                        new
+                        tuiOption
+                        type="button"
+                    >
+                        Log out
+                    </button>
+                </tui-data-list>
+            </ng-template>
+        </button>
+    </section>
 </aside>
 
 <main class="container">
-    <router-outlet />
+    <router-outlet/>
 </main>

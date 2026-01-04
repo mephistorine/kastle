@@ -6,6 +6,10 @@ export class RouterPathBuilder {
         return `/diaries/${diaryId.toString()}/entries`;
     }
 
+    allEntriesPage() {
+        return `/diaries/all/entries`;
+    }
+
     addEntry(diaryId: number) {
         return `${this.diaryEntries(diaryId)}/add`;
     }
@@ -16,5 +20,9 @@ export class RouterPathBuilder {
 
     editEntry(diaryId: number, entryId: number) {
         return `${this.diaryEntries(diaryId)}/${entryId}/edit`;
+    }
+
+    settings() {
+        return `/settings`
     }
 }

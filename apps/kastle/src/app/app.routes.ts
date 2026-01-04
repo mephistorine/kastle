@@ -59,7 +59,7 @@ export const appRoutes: Route[] = [
         canActivate: [appMustBeConfigured, userMustBeLogged],
         title: "Home",
         resolve: {
-            diaries: async (route: ActivatedRouteSnapshot) => {
+            diaries: async () => {
                 const supabaseClient = injectSupabaseClient();
                 const {data, error} = await supabaseClient.from("diaries").select();
 
