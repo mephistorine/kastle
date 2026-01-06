@@ -23,30 +23,72 @@
 
         <nav class="diaries-nav">
             @for (diary of diaryLinks(); track diary.id) {
-                <a
-                    tuiButton
-                    [iconStart]="diary.icon"
-                    size="s"
-                    appearance="flat-grayscale"
-                    [routerLink]="diary.url"
-                >
-                    {{ diary.name }}
-                </a>
+                <div class="diary-link-container">
+                    <a
+                        tuiButton
+                        [iconStart]="diary.icon"
+                        size="m"
+                        appearance="flat-grayscale"
+                        [routerLink]="diary.url"
+                        class="diary-link aside-button"
+                    >
+                        {{diary.name}}
+                    </a>
+
+                    @if (diary.id !== "all") {
+                        <button
+                            class="diary-actions-button"
+                            appearance="flat-grayscale"
+                            iconStart="ellipsis"
+                            size="s"
+                            tuiDropdownOpen
+                            tuiIconButton
+                            type="button"
+                            [tuiDropdown]="menu"
+                            (click.prevent)="0"
+                        >
+                            <ng-template #menu>
+                                <tui-data-list size="s">
+                                    <button
+                                        iconStart="pencil"
+                                        new
+                                        tuiOption
+                                        type="button"
+                                        (click)="openDiaryUpsertDialog(diary)"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        iconStart="trash"
+                                        new
+                                        tuiAppearance="flat-destructive"
+                                        tuiOption
+                                        type="button"
+                                        [disabled]="true"
+                                    >
+                                        Delete
+                                    </button>
+                                </tui-data-list>
+                            </ng-template>
+                        </button>
+                    }
+                </div>
             }
         </nav>
     </section>
 
     <section class="profile">
         <a tuiButton iconStart="settings" [routerLink]="settingsUrl" appearance="flat-grayscale"
-           size="s">Settings</a>
+           size="m" class="aside-button">Settings</a>
 
         <button
             appearance="flat-grayscale"
-            size="s"
+            size="m"
             tuiDropdownOpen
             tuiButton
             type="button"
             [tuiDropdown]="menu"
+            class="aside-button"
         >
             <tui-avatar
                 size="xs"

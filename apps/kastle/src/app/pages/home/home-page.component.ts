@@ -9,7 +9,7 @@ import {
 import {ReactiveFormsModule} from "@angular/forms";
 import {RouterLink, RouterOutlet} from "@angular/router";
 import {
-    TuiAlertService,
+    TuiAlertService, TuiAppearance,
     TuiButton,
     TuiDataListComponent,
     TuiDialogService,
@@ -41,6 +41,7 @@ import {injectSupabaseClient} from "../../supabase";
         TuiDropdownOpen,
         TuiOptionNew,
         TuiDropdown,
+        TuiAppearance,
     ],
     templateUrl: "./home-page.component.html",
     styleUrl: "./home-page.component.css",
@@ -74,27 +75,39 @@ export class HomePageComponent {
         ];
     });
 
-    openDiaryUpsertDialog() {
+    openDiaryUpsertDialog(editDiary?: any) {
         this.tuiDialogService
             // FIX: any
-            .open<any>(DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS)
+            .open<any>(DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS, {
+                data: editDiary ?? null
+            })
             .pipe(
-                switchMap((data) => this.supabaseClient.from("diaries").upsert({
-                    name: data.name,
-                    accent_color: data.accentColor,
-                    icon: data.icon,
-                })),
+                switchMap((data) =>
+                    this.supabaseClient.from("diaries").upsert({
+                        ...(editDiary ? {id: editDiary.id} : {}),
+                        name: data.name,
+                        accent_color: data.accentColor,
+                        icon: data.icon,
+                    }),
+                ),
                 switchMap(({error}) => {
-                   if (error) {
-                       return this.tuiAlertService
-                           // FIX: Dont use error.message as UI error text
-                           .open(error.message, {label: "Creation error", appearance: "error"})
-                   }
+                    if (error) {
+                        return (
+                            this.tuiAlertService
+                                // FIX: Dont use error.message as UI error text
+                                .open(error.message, {
+                                    label: "Creation error",
+                                    appearance: "error",
+                                })
+                        );
+                    }
 
-                   return EMPTY;
+                    return EMPTY;
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
             .subscribe();
     }
+
+
 }

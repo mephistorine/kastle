@@ -66,3 +66,24 @@ main {
     flex-direction: column;
     gap: 0.5rem;
 }
+
+.diary-link-container {
+    position: relative;
+}
+
+.diary-link {
+    inline-size: 100%;
+    justify-content: start;
+    font-weight: normal;
+}
+
+.diary-actions-button {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+}
+
+.aside-button {
+    font-weight: normal;
+}

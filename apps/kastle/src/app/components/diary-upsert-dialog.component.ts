@@ -146,6 +146,7 @@ import {TuiAutoFocus} from "@taiga-ui/cdk";
     `,
 })
 export class DiaryUpsertDialogComponent {
+    // FIX: any
     private readonly dialogContext = injectContext<TuiDialogContext<any>>();
     private readonly nonNullableFormBuilder = inject(NonNullableFormBuilder);
 

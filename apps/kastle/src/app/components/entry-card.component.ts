@@ -77,7 +77,7 @@ import {TuiAppearance, TuiButton, TuiDataList, TuiDropdown} from "@taiga-ui/core
                     [tuiDropdown]="menu"
                 >
                     <ng-template #menu>
-                        <tui-data-list>
+                        <tui-data-list size="s">
                             <button
                                 iconStart="bookmark"
                                 new
