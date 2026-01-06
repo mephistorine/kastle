@@ -74,7 +74,6 @@ main {
 .diary-link {
     inline-size: 100%;
     justify-content: start;
-    font-weight: normal;
 }
 
 .diary-actions-button {
@@ -85,5 +84,5 @@ main {
 }
 
 .aside-button {
-    font-weight: normal;
+    font-weight: normal !important;
 }

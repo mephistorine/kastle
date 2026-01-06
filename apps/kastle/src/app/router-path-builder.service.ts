@@ -23,6 +23,10 @@ export class RouterPathBuilder {
     }
 
     settings() {
-        return `/settings`
+        return `/settings`;
+    }
+
+    login() {
+        return "/login";
     }
 }

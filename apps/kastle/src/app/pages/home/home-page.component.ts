@@ -3,13 +3,16 @@ import {
     Component,
     computed,
     DestroyRef,
+    Directive,
+    effect,
     inject,
-    input, signal,
+    input, resource,
 } from "@angular/core";
 import {ReactiveFormsModule} from "@angular/forms";
-import {RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {
-    TuiAlertService, TuiAppearance,
+    TuiAlertService,
+    TuiAppearance,
     TuiButton,
     TuiDataListComponent,
     TuiDialogService,
@@ -22,10 +25,24 @@ import {Tables} from "../../../database.types";
 import {TuiHeader} from "@taiga-ui/layout";
 import {RouterPathBuilder} from "../../router-path-builder.service";
 import {DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/diary-upsert-dialog.component";
-import {TuiAvatar} from "@taiga-ui/kit";
-import {EMPTY, switchMap, take} from "rxjs";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {TuiAvatar, TuiSkeleton} from "@taiga-ui/kit";
+import {EMPTY, switchMap} from "rxjs";
+import {takeUntilDestroyed, toSignal} from "@angular/core/rxjs-interop";
 import {injectSupabaseClient} from "../../supabase";
+
+@Directive({
+    selector: "[appAsideItemRouterLinkActiveSync]"
+})
+export class AsideItemRouterLinkActiveAndButtonSyncDirective {
+    private tuiAppearance = inject(TuiAppearance)
+    private routerLinkActive = toSignal(inject(RouterLinkActive).isActiveChange)
+
+    constructor() {
+        effect(() => {
+            this.tuiAppearance.tuiAppearanceState = this.routerLinkActive() ? "hover" : null
+        })
+    }
+}
 
 @Component({
     selector: "app-home-page",
@@ -43,6 +60,8 @@ import {injectSupabaseClient} from "../../supabase";
         TuiDropdown,
         TuiAppearance,
         RouterLinkActive,
+        AsideItemRouterLinkActiveAndButtonSyncDirective,
+        TuiSkeleton,
     ],
     templateUrl: "./home-page.component.html",
     styleUrl: "./home-page.component.css",
@@ -54,10 +73,9 @@ export class HomePageComponent {
     private readonly destroyRef = inject(DestroyRef);
     private readonly tuiAlertService = inject(TuiAlertService);
     private readonly supabaseClient = injectSupabaseClient();
+    private readonly router = inject(Router);
 
     readonly settingsUrl = this.routerPathBuilder.settings();
-
-    readonly activeDiary = signal<number | null>(null);
 
     readonly diaries = input.required<Tables<"diaries">[]>();
 
@@ -76,6 +94,18 @@ export class HomePageComponent {
                 icon: icon,
             })),
         ];
+    });
+
+    readonly user = resource({
+        loader: async () => {
+            const {data, error} = await this.supabaseClient.auth.getUser();
+
+            if (error) {
+                throw error;
+            }
+
+            return data.user;
+        },
     });
 
     openDiaryUpsertDialog(editDiary?: any) {
@@ -112,13 +142,8 @@ export class HomePageComponent {
             .subscribe();
     }
 
-    setActiveRoute(id: number, isActive: boolean) {
-        if (isActive) {
-            this.activeDiary.set(id)
-        } else {
-            if (this.activeDiary() === id) {
-                this.activeDiary.set(null);
-            }
-        }
+    async logOut() {
+        await this.supabaseClient.auth.signOut();
+        await this.router.navigateByUrl(this.routerPathBuilder.login());
     }
 }

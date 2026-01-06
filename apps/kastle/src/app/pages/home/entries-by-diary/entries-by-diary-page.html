@@ -14,8 +14,9 @@
     </aside>
 </header>
 
-<div class="entries-container">
+<!-- TODO: Add empty state -->
 
+<div class="entries-container">
     @for (entry of entries(); track entry.id) {
         <app-entry-card
             [entry]="entry"
