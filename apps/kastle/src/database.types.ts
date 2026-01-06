@@ -21,6 +21,8 @@ export type SupabaseTypes = {
                     name: string;
                     updated_at: string;
                     user_id: string;
+                    accent_color: string;
+                    icon: string;
                 };
                 Insert: {
                     created_at?: string;
@@ -28,6 +30,8 @@ export type SupabaseTypes = {
                     name?: string;
                     updated_at?: string;
                     user_id?: string;
+                    accent_color?: string;
+                    icon?: string;
                 };
                 Update: {
                     created_at?: string;
@@ -35,6 +39,8 @@ export type SupabaseTypes = {
                     name?: string;
                     updated_at?: string;
                     user_id?: string;
+                    accent_color?: string;
+                    icon?: string;
                 };
                 Relationships: [];
             };
