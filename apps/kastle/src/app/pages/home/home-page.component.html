@@ -30,12 +30,15 @@
                         size="m"
                         appearance="flat-grayscale"
                         [routerLink]="diary.url"
+                        routerLinkActive
+                        (isActiveChange)="setActiveRoute(diary.id, $event)"
+                        [tuiAppearanceState]="activeDiary() === diary.id ? 'hover' : null"
                         class="diary-link aside-button"
                     >
                         {{diary.name}}
                     </a>
 
-                    @if (diary.id !== "all") {
+                    @if (diary.id !== -1) {
                         <button
                             class="diary-actions-button"
                             appearance="flat-grayscale"

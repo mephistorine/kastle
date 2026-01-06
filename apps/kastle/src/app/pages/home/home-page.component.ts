@@ -4,10 +4,10 @@ import {
     computed,
     DestroyRef,
     inject,
-    input,
+    input, signal,
 } from "@angular/core";
 import {ReactiveFormsModule} from "@angular/forms";
-import {RouterLink, RouterOutlet} from "@angular/router";
+import {RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {
     TuiAlertService, TuiAppearance,
     TuiButton,
@@ -42,6 +42,7 @@ import {injectSupabaseClient} from "../../supabase";
         TuiOptionNew,
         TuiDropdown,
         TuiAppearance,
+        RouterLinkActive,
     ],
     templateUrl: "./home-page.component.html",
     styleUrl: "./home-page.component.css",
@@ -56,12 +57,14 @@ export class HomePageComponent {
 
     readonly settingsUrl = this.routerPathBuilder.settings();
 
+    readonly activeDiary = signal<number | null>(null);
+
     readonly diaries = input.required<Tables<"diaries">[]>();
 
     readonly diaryLinks = computed(() => {
         return [
             {
-                id: "all",
+                id: -1,
                 name: "All entries",
                 url: this.routerPathBuilder.allEntriesPage(),
                 icon: "grid-2x2",
@@ -79,7 +82,7 @@ export class HomePageComponent {
         this.tuiDialogService
             // FIX: any
             .open<any>(DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS, {
-                data: editDiary ?? null
+                data: editDiary ?? null,
             })
             .pipe(
                 switchMap((data) =>
@@ -109,5 +112,13 @@ export class HomePageComponent {
             .subscribe();
     }
 
-
+    setActiveRoute(id: number, isActive: boolean) {
+        if (isActive) {
+            this.activeDiary.set(id)
+        } else {
+            if (this.activeDiary() === id) {
+                this.activeDiary.set(null);
+            }
+        }
+    }
 }
