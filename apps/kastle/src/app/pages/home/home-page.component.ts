@@ -6,7 +6,8 @@ import {
     Directive,
     effect,
     inject,
-    input, resource,
+    input,
+    resource,
 } from "@angular/core";
 import {ReactiveFormsModule} from "@angular/forms";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
@@ -31,16 +32,18 @@ import {takeUntilDestroyed, toSignal} from "@angular/core/rxjs-interop";
 import {injectSupabaseClient} from "../../supabase";
 
 @Directive({
-    selector: "[appAsideItemRouterLinkActiveSync]"
+    selector: "[appAsideItemRouterLinkActiveSync]",
 })
 export class AsideItemRouterLinkActiveAndButtonSyncDirective {
-    private tuiAppearance = inject(TuiAppearance)
-    private routerLinkActive = toSignal(inject(RouterLinkActive).isActiveChange)
+    private tuiAppearance = inject(TuiAppearance);
+    private routerLinkActive = toSignal(inject(RouterLinkActive).isActiveChange);
 
     constructor() {
         effect(() => {
-            this.tuiAppearance.tuiAppearanceState = this.routerLinkActive() ? "hover" : null
-        })
+            this.tuiAppearance.tuiAppearanceState = this.routerLinkActive()
+                ? "hover"
+                : null;
+        });
     }
 }
 
@@ -74,8 +77,6 @@ export class HomePageComponent {
     private readonly tuiAlertService = inject(TuiAlertService);
     private readonly supabaseClient = injectSupabaseClient();
     private readonly router = inject(Router);
-
-    readonly settingsUrl = this.routerPathBuilder.settings();
 
     readonly diaries = input.required<Tables<"diaries">[]>();
 

@@ -34,7 +34,7 @@
                         appAsideItemRouterLinkActiveSync
                         class="diary-link aside-button"
                     >
-                        {{diary.name}}
+                        {{ diary.name }}
                     </a>
 
                     @if (diary.id !== -1) {
@@ -80,9 +80,6 @@
 
 
     <section class="profile">
-        <a tuiButton iconStart="settings" [routerLink]="settingsUrl" appearance="flat-grayscale"
-           size="m" class="aside-button" routerLinkActive appAsideItemRouterLinkActiveSync>Settings</a>
-
         <button
             appearance="flat-grayscale"
             size="m"
@@ -100,14 +97,22 @@
 
             <span>
                 @if (user.isLoading()) {
-                    {{"johndoe@gmail.com"}}
+                    {{ "johndoe@gmail.com" }}
                 } @else {
-                    {{user.value()!.email}}
+                    {{ user.value()!.email }}
                 }
             </span>
 
             <ng-template #menu>
                 <tui-data-list>
+                    <button
+                        iconStart="settings"
+                        new
+                        tuiOption
+                        type="button"
+                    >
+                        Settings
+                    </button>
                     <!-- TODO: Add profile edit -->
                     <button
                         iconStart="user"

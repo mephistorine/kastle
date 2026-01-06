@@ -22,10 +22,6 @@ export class RouterPathBuilder {
         return `${this.diaryEntries(diaryId)}/${entryId}/edit`;
     }
 
-    settings() {
-        return `/settings`;
-    }
-
     login() {
         return "/login";
     }
