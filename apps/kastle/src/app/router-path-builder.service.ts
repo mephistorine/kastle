@@ -10,6 +10,10 @@ export class RouterPathBuilder {
         return `/diaries/all/entries`;
     }
 
+    deletedEntries() {
+        return `/diaries/trash/entries`;
+    }
+
     addEntry(diaryId: number) {
         return `${this.diaryEntries(diaryId)}/add`;
     }

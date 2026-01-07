@@ -94,6 +94,12 @@ export class HomePageComponent {
                 url: this.routerPathBuilder.diaryEntries(id),
                 icon: icon,
             })),
+            {
+                id: -2,
+                name: "Recently deleted",
+                url: this.routerPathBuilder.deletedEntries(),
+                icon: "trash",
+            }
         ];
     });
 

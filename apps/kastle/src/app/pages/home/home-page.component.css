@@ -75,7 +75,12 @@ main {
     justify-content: start;
 }
 
+.diary-link-container:hover .diary-actions-button {
+    display: inline-flex;
+}
+
 .diary-actions-button {
+    display: none;
     position: absolute;
     inset-inline-end: 0;
     inset-block-start: 50%;
