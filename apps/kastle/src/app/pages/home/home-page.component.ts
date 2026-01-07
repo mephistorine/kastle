@@ -99,7 +99,7 @@ export class HomePageComponent {
                 name: "Recently deleted",
                 url: this.routerPathBuilder.deletedEntries(),
                 icon: "trash",
-            }
+            },
         ];
     });
 
