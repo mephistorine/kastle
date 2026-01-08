@@ -1,4 +1,4 @@
-<nav>
+<header>
     <a
         appearance="action-grayscale"
         iconStart="chevron-left"
@@ -8,15 +8,36 @@
         Back
     </a>
 
-    <button
-        iconStart="image"
-        size="s"
-        tuiIconButton
-        type="button"
-        (click)="attachImages()"
-    >
-        Attach images
-    </button>
+    <div tuiGroup>
+        <button
+            iconStart="smile"
+            size="s"
+            tuiIconButton
+            type="button"
+            [disabled]="true"
+        >
+            Track mood
+        </button>
+        <button
+            iconStart="map-pin-plus"
+            size="s"
+            tuiIconButton
+            type="button"
+            [disabled]="true"
+        >
+            Add some location
+        </button>
+
+        <button
+            iconStart="image"
+            size="s"
+            tuiIconButton
+            type="button"
+            (click)="attachImages()"
+        >
+            Attach images
+        </button>
+    </div>
 
     <button
         size="s"
@@ -26,7 +47,7 @@
     >
         Save
     </button>
-</nav>
+</header>
 
 <div class="entry-attachments-container">
     @for (attachment of attachments(); track attachment) {

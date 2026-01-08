@@ -4,7 +4,7 @@
     "private": true,
     "license": "MIT",
     "scripts": {
-        "start": "nx serve --port 4500",
+        "start": "nx serve --port 4501",
         "lint": "nx lint",
         "format": "nx format:write"
     },

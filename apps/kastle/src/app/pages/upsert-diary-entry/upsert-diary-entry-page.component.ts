@@ -12,7 +12,7 @@ import {NonNullableFormBuilder, ReactiveFormsModule} from "@angular/forms";
 import {TiptapEditorDirective} from "ngx-tiptap";
 import {TuiInputInline, TuiSkeleton} from "@taiga-ui/kit";
 import {Router, RouterLink} from "@angular/router";
-import {TuiButton, TuiDialogService, TuiLink} from "@taiga-ui/core";
+import {TuiButton, TuiDialogService, TuiGroup, TuiLink} from "@taiga-ui/core";
 import {Editor} from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import {Placeholder} from "@tiptap/extensions";
@@ -47,6 +47,7 @@ import {isEqual} from "es-toolkit";
         TuiLink,
         TuiButton,
         TuiSkeleton,
+        TuiGroup,
     ],
     templateUrl: "./upsert-diary-entry-page.component.html",
     styleUrl: "./upsert-diary-entry-page.component.css",
@@ -142,7 +143,7 @@ export class UpsertDiaryEntryPageComponent implements OnInit {
         const {error} = await this.diaryEntriesTable
             .update({
                 title: formVal.title,
-                content: JSON.stringify(formVal.content)
+                content: JSON.stringify(formVal.content),
             })
             .eq("id", this.entryId()!);
 

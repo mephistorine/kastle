@@ -53,6 +53,7 @@ export type SupabaseTypes = {
                     title: string;
                     updated_at: string;
                     user_id: string;
+                    isDeleted: boolean;
                 };
                 Insert: {
                     content?: string;
@@ -62,6 +63,7 @@ export type SupabaseTypes = {
                     title?: string;
                     updated_at?: string;
                     user_id?: string;
+                    isDeleted?: boolean;
                 };
                 Update: {
                     content?: string;
@@ -71,6 +73,7 @@ export type SupabaseTypes = {
                     title?: string;
                     updated_at?: string;
                     user_id?: string;
+                    isDeleted?: boolean;
                 };
                 Relationships: [
                     {
