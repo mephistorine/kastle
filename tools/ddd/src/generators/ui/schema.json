@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/schema",
+    "$id": "UI",
+    "title": "",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "UI name (e.g. orders-list)",
+            "$default": {"$source": "argv", "index": 0},
+            "x-prompt": "Feature name (e.g. orders-list)"
+        },
+        "domain": {
+            "type": "string",
+            "description": "Domain name (e.g. orders)",
+            "x-prompt": "Domain (e.g. orders)"
+        },
+        "prefix": {
+            "type": "string",
+            "description": "Prefix"
+        },
+        "buildable": {"type": "boolean", "default": false},
+        "publishable": {"type": "boolean", "default": false}
+    },
+    "required": ["name"]
+}

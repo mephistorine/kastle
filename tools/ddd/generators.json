@@ -1,0 +1,29 @@
+{
+    "generators": {
+        "feature": {
+            "factory": "./src/generators/feature/feature",
+            "schema": "./src/generators/feature/schema.json",
+            "description": "feature generator"
+        },
+        "domain": {
+            "factory": "./src/generators/domain/domain",
+            "schema": "./src/generators/domain/schema.json",
+            "description": "domain generator"
+        },
+        "ui": {
+            "factory": "./src/generators/ui/ui",
+            "schema": "./src/generators/ui/schema.json",
+            "description": "ui generator"
+        },
+        "util": {
+            "factory": "./src/generators/util/util",
+            "schema": "./src/generators/util/schema.json",
+            "description": "util generator"
+        },
+        "scaffold": {
+            "factory": "./src/generators/scaffold/scaffold",
+            "schema": "./src/generators/scaffold/schema.json",
+            "description": "scaffold generator"
+        }
+    }
+}

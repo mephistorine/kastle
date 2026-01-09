@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/schema",
+    "$id": "Util",
+    "title": "",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Util lib name (e.g. orders-list)",
+            "$default": {"$source": "argv", "index": 0},
+            "x-prompt": "UI name (e.g. orders-list)"
+        },
+        "domain": {
+            "type": "string",
+            "description": "Domain name (e.g. orders)",
+            "x-prompt": "Domain (e.g. orders)"
+        },
+        "buildable": {"type": "boolean", "default": false},
+        "publishable": {"type": "boolean", "default": false}
+    },
+    "required": ["name"]
+}

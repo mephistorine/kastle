@@ -1,0 +1,48 @@
+{
+    "name": "ddd",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "tools/ddd/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/tools/ddd",
+                "main": "tools/ddd/src/index.ts",
+                "tsConfig": "tools/ddd/tsconfig.lib.json",
+                "assets": [
+                    "tools/ddd/*.md",
+                    {
+                        "input": "./tools/ddd/src",
+                        "glob": "**/!(*.ts)",
+                        "output": "./src"
+                    },
+                    {
+                        "input": "./tools/ddd/src",
+                        "glob": "**/*.d.ts",
+                        "output": "./src"
+                    },
+                    {
+                        "input": "./tools/ddd",
+                        "glob": "generators.json",
+                        "output": "."
+                    },
+                    {
+                        "input": "./tools/ddd",
+                        "glob": "executors.json",
+                        "output": "."
+                    }
+                ]
+            }
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "tools/ddd/jest.config.ts"
+            }
+        }
+    }
+}
