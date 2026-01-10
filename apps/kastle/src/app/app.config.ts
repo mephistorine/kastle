@@ -1,14 +1,15 @@
-import {provideEventPlugins} from "@taiga-ui/event-plugins";
 import {
-    ApplicationConfig, provideAppInitializer,
+    ApplicationConfig,
+    provideAppInitializer,
     provideBrowserGlobalErrorListeners,
     provideZoneChangeDetection,
 } from "@angular/core";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideRouter, withComponentInputBinding} from "@angular/router";
+import {providePocketbaseClient} from "@kstl/shared/domain";
+import {provideEventPlugins} from "@taiga-ui/event-plugins";
+import {openDB} from "idb";
 import {appRoutes} from "./app.routes";
-import {type IDBPDatabase, openDB} from "idb";
-import {injectSupabaseClient} from "./supabase";
 import {injectIndexedDBContainer} from "./local-db";
 
 export const appConfig: ApplicationConfig = {
@@ -28,14 +29,15 @@ export const appConfig: ApplicationConfig = {
                     });
 
                     filesObjectStorage.createIndex("path", "path", {
-                        unique: true
-                    })
+                        unique: true,
+                    });
                 },
-            })
+            });
 
             container.set(db as any);
 
             return db;
-        })
+        }),
+        providePocketbaseClient(import.meta.env.POCKETBASE_URL),
     ],
 };

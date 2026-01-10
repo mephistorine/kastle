@@ -9,6 +9,7 @@ import {
     input,
     resource,
 } from "@angular/core";
+import {takeUntilDestroyed, toSignal} from "@angular/core/rxjs-interop";
 import {ReactiveFormsModule} from "@angular/forms";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {
@@ -22,13 +23,12 @@ import {
     TuiOptionNew,
     TuiTitle,
 } from "@taiga-ui/core";
-import {Tables} from "../../../database.types";
-import {TuiHeader} from "@taiga-ui/layout";
-import {RouterPathBuilder} from "../../router-path-builder.service";
-import {DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/diary-upsert-dialog.component";
 import {TuiAvatar, TuiSkeleton} from "@taiga-ui/kit";
+import {TuiHeader} from "@taiga-ui/layout";
 import {EMPTY, switchMap} from "rxjs";
-import {takeUntilDestroyed, toSignal} from "@angular/core/rxjs-interop";
+import {Tables} from "../../../database.types";
+import {DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/diary-upsert-dialog.component";
+import {RouterPathBuilder} from "../../router-path-builder.service";
 import {injectSupabaseClient} from "../../supabase";
 
 @Directive({

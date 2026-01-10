@@ -1,14 +1,16 @@
 import {inject} from "@angular/core";
 import {ActivatedRouteSnapshot, Route, Router} from "@angular/router";
+import {FeatureLoginPageComponent} from "@kstl/auth/feature-login-page";
+import {FeatureRegisterPageComponent} from "@kstl/auth/feature-register-page";
 import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
 import {EntryPageComponent} from "./pages/home/entry-page/entry-page.component";
 import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
 import {HomePageComponent} from "./pages/home/home-page.component";
 import {LoginPage} from "./pages/login/login-page";
-import {RegisterPage} from "./pages/register/register-page";
 import {SetUp} from "./pages/set-up/set-up";
 import {injectSupabaseClient, SupabaseFactory} from "./supabase";
 import {UpsertDiaryEntryPageComponent} from "./pages/upsert-diary-entry/upsert-diary-entry-page.component";
+import { RegisterPage } from "./pages/register/register-page";
 
 const appMustBeConfigured = () => {
     const supabaseFactory = inject(SupabaseFactory);
@@ -68,7 +70,7 @@ export const appRoutes: Route[] = [
                 }
 
                 return data;
-            }
+            },
         },
         children: [
             {
@@ -91,7 +93,7 @@ export const appRoutes: Route[] = [
                             .select()
                             .eq("id", diaryId)
                             .single()
-                            .then(s => s.data)
+                            .then((s) => s.data);
                     },
                     entries: async (route: ActivatedRouteSnapshot) => {
                         const supabaseClient = injectSupabaseClient();
@@ -100,39 +102,48 @@ export const appRoutes: Route[] = [
                             .from("entries")
                             .select()
                             .eq("diary_id", diaryId)
-                            .order("created_at", {ascending: false})
+                            .order("created_at", {ascending: false});
 
                         if (entriesError !== null) {
                             throw entriesError;
                         }
 
-                        const {data: attachments, error: entryAttachmentsError} = await supabaseClient
-                            .from("entry_attachments")
-                            .select("entry_id, attachment_path")
-                            .in("entry_id", entries.map(e => e.id));
+                        const {data: attachments, error: entryAttachmentsError} =
+                            await supabaseClient
+                                .from("entry_attachments")
+                                .select("entry_id, attachment_path")
+                                .in(
+                                    "entry_id",
+                                    entries.map((e) => e.id),
+                                );
 
                         if (entryAttachmentsError !== null) {
                             throw entryAttachmentsError;
                         }
 
-                        const attachmentPathsByEntryId = new Map<number, string[]>()
+                        const attachmentPathsByEntryId = new Map<number, string[]>();
 
-                        attachments?.forEach(attachment => {
+                        attachments?.forEach((attachment) => {
                             if (attachmentPathsByEntryId.has(attachment.entry_id)) {
-                                attachmentPathsByEntryId.get(attachment.entry_id)?.push(attachment.attachment_path)
+                                attachmentPathsByEntryId
+                                    .get(attachment.entry_id)
+                                    ?.push(attachment.attachment_path);
                             } else {
-                                attachmentPathsByEntryId.set(attachment.entry_id, [attachment.attachment_path])
+                                attachmentPathsByEntryId.set(attachment.entry_id, [
+                                    attachment.attachment_path,
+                                ]);
                             }
-                        })
+                        });
 
                         return entries?.map((entry) => {
                             return {
                                 ...entry,
-                                attachmentPaths: attachmentPathsByEntryId.get(entry.id) ?? []
-                            }
+                                attachmentPaths:
+                                    attachmentPathsByEntryId.get(entry.id) ?? [],
+                            };
                         });
-                    }
-                }
+                    },
+                },
             },
             {
                 path: ":diaryId",
@@ -154,9 +165,11 @@ export const appRoutes: Route[] = [
                         const {diaryId, entryId} = route.params;
                         const supabaseClient = injectSupabaseClient();
 
-                        const {data: attachments, error: entryAttachmentsError} = await supabaseClient.from("entry_attachments")
-                            .select("attachment_path")
-                            .eq("entry_id", entryId);
+                        const {data: attachments, error: entryAttachmentsError} =
+                            await supabaseClient
+                                .from("entry_attachments")
+                                .select("attachment_path")
+                                .eq("entry_id", entryId);
 
                         if (entryAttachmentsError) {
                             throw entryAttachmentsError;
@@ -173,7 +186,11 @@ export const appRoutes: Route[] = [
                             throw entriesError;
                         }
 
-                        Reflect.set(entry, "attachmentPaths", attachments?.map(d => d.attachment_path))
+                        Reflect.set(
+                            entry,
+                            "attachmentPaths",
+                            attachments?.map((d) => d.attachment_path),
+                        );
 
                         return entry;
                     },
@@ -209,13 +226,13 @@ export const appRoutes: Route[] = [
     },
     {
         path: "login",
-        component: LoginPage,
+        component: FeatureLoginPageComponent,
         canActivate: [appMustBeConfigured, userMustBeUnlogged],
         title: "Login",
     },
     {
         path: "register",
-        component: RegisterPage,
+        component: FeatureRegisterPageComponent,
         canActivate: [appMustBeConfigured, userMustBeUnlogged],
         title: "Registration",
     },

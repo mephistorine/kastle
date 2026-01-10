@@ -10,7 +10,7 @@ export async function utilGenerator(tree: Tree, options: UtilGeneratorSchema) {
 
     const result = await jsLibraryGenerator(tree, {
         name: libName,
-        directory: `libs/${domain}`,
+        directory: `libs/${domain}/${libName}`,
         importPath: makeImportPath(getOrgFromTree(tree), domain, libName),
         tags: makeTagsString(domain, "domain-logic"),
         buildable: Boolean(options.buildable),

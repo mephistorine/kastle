@@ -1,0 +1,21 @@
+{
+    "name": "feature-login-page",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/auth/feature-login-page/src",
+    "prefix": "lib-auth",
+    "projectType": "library",
+    "tags": ["domain:auth", "type:feature"],
+    "targets": {
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "libs/auth/feature-login-page/jest.config.ts",
+                "tsConfig": "libs/auth/feature-login-page/tsconfig.spec.json"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

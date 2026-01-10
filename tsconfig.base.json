@@ -8,13 +8,19 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "importHelpers": true,
-        "target": "es2015",
+        "target": "ES2020",
         "module": "esnext",
         "lib": ["es2020", "dom"],
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
-        "paths": {}
+        "paths": {
+            "ddd": ["tools/ddd/src/index.ts"],
+            "@kstl/shared/domain": ["libs/shared/domain/src/index.ts"],
+            "@kstl/auth/domain": ["libs/auth/domain/src/index.ts"],
+            "@kstl/auth/feature-login-page": ["libs/auth/feature-login-page/src/index.ts"],
+            "@kstl/auth/feature-register-page": ["libs/auth/feature-register-page/src/index.ts"]
+        }
     },
     "exclude": ["node_modules", "tmp"]
 }
