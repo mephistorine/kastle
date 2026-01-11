@@ -6,7 +6,9 @@
     "scripts": {
         "start": "nx serve --port 4501",
         "lint": "nx lint",
-        "format": "nx format:write"
+        "format": "nx format:write",
+        "start:pocketbase": "pocketbase serve",
+        "build": "nx build"
     },
     "overrides": {
         "@supabase/supabase-js": {
@@ -31,6 +33,7 @@
         "@taiga-ui/cdk": "^4.64.0",
         "@taiga-ui/core": "^4.64.0",
         "@taiga-ui/event-plugins": "^4.0.2",
+        "@taiga-ui/experimental": "^4.64.0",
         "@taiga-ui/icons": "^4.64.0",
         "@taiga-ui/kit": "^4.64.0",
         "@taiga-ui/layout": "^4.64.0",
@@ -49,6 +52,7 @@
         "zone.js": "~0.15.0"
     },
     "devDependencies": {
+        "@angular-devkit/build-angular": "^20.3.14",
         "@angular-devkit/core": "~20.3.0",
         "@angular-devkit/schematics": "~20.3.0",
         "@angular/build": "~20.3.0",

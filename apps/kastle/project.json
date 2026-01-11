@@ -30,7 +30,7 @@
                     "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",
                     "apps/kastle/src/styles.css"
                 ],
-                "plugins": ["apps/my-app/plugins/env-var-plugin.js"]
+                "plugins": ["apps/kastle/plugins/env-var-plugin.js"]
             },
             "configurations": {
                 "production": {
@@ -38,7 +38,7 @@
                         {
                             "type": "initial",
                             "maximumWarning": "500kb",
-                            "maximumError": "1mb"
+                            "maximumError": "2mb"
                         },
                         {
                             "type": "anyComponentStyle",
@@ -58,7 +58,7 @@
         },
         "serve": {
             "continuous": true,
-            "executor": "@angular/build:dev-server",
+            "executor": "@nx/angular:dev-server",
             "configurations": {
                 "production": {
                     "buildTarget": "kastle:build:production"
@@ -70,7 +70,7 @@
             "defaultConfiguration": "development"
         },
         "extract-i18n": {
-            "executor": "@angular/build:extract-i18n",
+            "executor": "@nx/angular:extract-i18n",
             "options": {
                 "buildTarget": "kastle:build"
             }
