@@ -16,6 +16,8 @@ export async function domainGenerator(tree: Tree, options: DomainGeneratorSchema
         tags: makeTagsString(domainName, "domain-logic"),
         buildable: Boolean(options.buildable),
         publishable: Boolean(options.publishable),
+        linter: "eslint",
+        unitTestRunner: "jest"
     });
 
     tree.write(`${directory}/src/lib/application/.gitkeep`, "");

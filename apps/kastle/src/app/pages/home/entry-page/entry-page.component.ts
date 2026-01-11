@@ -1,20 +1,25 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input} from "@angular/core";
-import {TuiButton, TuiLink} from "@taiga-ui/core";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    input
+} from "@angular/core";
+import {toObservable, toSignal} from "@angular/core/rxjs-interop";
+import {DomSanitizer} from "@angular/platform-browser";
 import {RouterLink} from "@angular/router";
-import {Tables} from "../../../../database.types";
+import {TuiButton, TuiLink} from "@taiga-ui/core";
+import {TuiSkeleton} from "@taiga-ui/kit";
 import {generateHTML} from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
-import {DomSanitizer} from "@angular/platform-browser";
-import {RouterPathBuilder} from "../../../router-path-builder.service";
-import {FileLoaderService} from "../../../file-loader";
-import {toObservable, toSignal} from "@angular/core/rxjs-interop";
 import {combineLatest, from, map, startWith, switchMap} from "rxjs";
-import {TuiHeader} from "@taiga-ui/layout";
-import {TuiSkeleton} from "@taiga-ui/kit";
+import {Tables} from "../../../../database.types";
+import {FileLoaderService} from "../../../file-loader";
+import {RouterPathBuilder} from "../../../router-path-builder.service";
 
 @Component({
     selector: "app-entry-page",
-    imports: [TuiButton, RouterLink, TuiHeader, TuiSkeleton, TuiLink],
+    imports: [TuiButton, RouterLink, TuiSkeleton, TuiLink],
     templateUrl: "./entry-page.component.html",
     styleUrl: "./entry-page.component.css",
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,8 +36,8 @@ export class EntryPageComponent {
     );
 
     readonly backUrl = computed(() => {
-        return this.routerPathBuilder.diaryEntries(this.entry().diary_id)
-    })
+        return this.routerPathBuilder.diaryEntries(this.entry().diary_id);
+    });
 
     readonly content = computed(() => {
         return this.domSanitizer.bypassSecurityTrustHtml(

@@ -19,12 +19,27 @@ export class AuthFacade {
     }
 
     register(authFacadeRegisterDto: AuthFacadeRegisterDto) {
-        return this.pocketbaseClient
-            .collection("users")
-            .create({
-                email: authFacadeRegisterDto.email,
-                password: authFacadeRegisterDto.password,
-                passwordConfim: authFacadeRegisterDto.passwordConfirm
-            })
+        return this.pocketbaseClient.collection("users").create({
+            email: authFacadeRegisterDto.email,
+            password: authFacadeRegisterDto.password,
+            passwordConfim: authFacadeRegisterDto.passwordConfirm,
+        });
+    }
+
+    async checkApiHealth(url: string) {
+        const tempClient = new PocketbaseClient(url);
+
+        try {
+            const result = await tempClient.health.check();
+            return result.code === 200;
+        } catch (error) {
+            console.log(error);
+            return false
+        }
+
+    }
+
+    setSerfhostedServerUrl(url: string) {
+        this.pocketbaseClient.baseURL = url;
     }
 }

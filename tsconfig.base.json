@@ -19,7 +19,9 @@
             "@kstl/shared/domain": ["libs/shared/domain/src/index.ts"],
             "@kstl/auth/domain": ["libs/auth/domain/src/index.ts"],
             "@kstl/auth/feature-login-page": ["libs/auth/feature-login-page/src/index.ts"],
-            "@kstl/auth/feature-register-page": ["libs/auth/feature-register-page/src/index.ts"]
+            "@kstl/auth/feature-register-page": ["libs/auth/feature-register-page/src/index.ts"],
+            "@kstl/shared/util-forms": ["libs/shared/util-forms/src/index.ts"],
+            "@kstl/shared/util-router": ["libs/shared/util-router/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]

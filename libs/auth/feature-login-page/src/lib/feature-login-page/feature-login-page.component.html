@@ -35,9 +35,31 @@
         formControlName="password"
         [error]="[] | tuiFieldError | async"
     />
+    <tui-radio-list
+        [formControl]="serverType"
+        [items]="serverTypes"
+        size="s"
+    />
+
+    @if (serverTypeValue() === 'selfHosted') {
+        <tui-textfield size="m" class="server-url-textfield">
+            <label tuiLabel>Server URL</label>
+            <input
+                [formControl]="selfhostedServerUrl"
+                tuiTextfield
+                type="url"
+                autocomplete="url"
+                placeholder="https://yourserver.com"
+            />
+        </tui-textfield>
+        <tui-error
+            [formControl]="selfhostedServerUrl"
+            [error]="[] | tuiFieldError | async"
+        />
+    }
     <footer>
         <a
-            routerLink="/register"
+            [routerLink]="registerUrl"
             tuiLink
         >
             Register

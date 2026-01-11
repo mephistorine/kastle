@@ -20,6 +20,7 @@ import {
 } from "@taiga-ui/core";
 import {TuiFieldErrorPipe} from "@taiga-ui/kit";
 import {TuiCardLarge, TuiForm, TuiHeader} from "@taiga-ui/layout";
+import {RouterPathBuilder} from "@kstl/shared/util-router";
 
 @Component({
     selector: "lib-auth-feature-register-page",
@@ -49,8 +50,11 @@ export class FeatureRegisterPageComponent {
     private readonly formBuilder = inject(NonNullableFormBuilder);
     private readonly authFacade = inject(AuthFacade);
     private readonly router = inject(Router);
+    private readonly routerPathBuilder = inject(RouterPathBuilder);
 
-    form = this.formBuilder.group({
+    readonly loginPageUrl = this.routerPathBuilder.login();
+
+    readonly form = this.formBuilder.group({
         email: ["", Validators.required],
         password: ["", Validators.required],
         passwordConfirm: ["", Validators.required],
@@ -71,6 +75,6 @@ export class FeatureRegisterPageComponent {
             passwordConfirm: passwordConfirm,
         });
 
-        await this.router.navigateByUrl("/login");
+        await this.router.navigateByUrl(this.routerPathBuilder.login());
     }
 }

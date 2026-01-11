@@ -15,3 +15,7 @@ footer {
     justify-content: space-between;
     align-items: center;
 }
+
+.server-url-textfield {
+    flex-grow: 4;
+}

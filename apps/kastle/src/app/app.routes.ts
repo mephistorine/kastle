@@ -2,6 +2,7 @@ import {inject} from "@angular/core";
 import {ActivatedRouteSnapshot, Route, Router} from "@angular/router";
 import {FeatureLoginPageComponent} from "@kstl/auth/feature-login-page";
 import {FeatureRegisterPageComponent} from "@kstl/auth/feature-register-page";
+import {PocketbaseClient} from "@kstl/shared/domain";
 import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
 import {EntryPageComponent} from "./pages/home/entry-page/entry-page.component";
 import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
@@ -58,18 +59,20 @@ export const appRoutes: Route[] = [
     {
         path: "diaries",
         component: HomePageComponent,
-        canActivate: [appMustBeConfigured, userMustBeLogged],
+        // canActivate: [appMustBeConfigured, userMustBeLogged],
         title: "Home",
         resolve: {
             diaries: async () => {
-                const supabaseClient = injectSupabaseClient();
+                const pocketbaseClient = inject(PocketbaseClient);
+                return pocketbaseClient.collection("entries").getFullList();
+                /*const supabaseClient = injectSupabaseClient();
                 const {data, error} = await supabaseClient.from("diaries").select();
 
                 if (error) {
                     throw error;
                 }
 
-                return data;
+                return data;*/
             },
         },
         children: [
@@ -227,13 +230,13 @@ export const appRoutes: Route[] = [
     {
         path: "login",
         component: FeatureLoginPageComponent,
-        canActivate: [appMustBeConfigured, userMustBeUnlogged],
+        // canActivate: [appMustBeConfigured, userMustBeUnlogged],
         title: "Login",
     },
     {
         path: "register",
         component: FeatureRegisterPageComponent,
-        canActivate: [appMustBeConfigured, userMustBeUnlogged],
+        // canActivate: [appMustBeConfigured, userMustBeUnlogged],
         title: "Registration",
     },
     {

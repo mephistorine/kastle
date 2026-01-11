@@ -75,7 +75,6 @@ export class HomePageComponent {
     private readonly tuiDialogService = inject(TuiDialogService);
     private readonly destroyRef = inject(DestroyRef);
     private readonly tuiAlertService = inject(TuiAlertService);
-    private readonly supabaseClient = injectSupabaseClient();
     private readonly router = inject(Router);
 
     readonly diaries = input.required<Tables<"diaries">[]>();
@@ -105,18 +104,14 @@ export class HomePageComponent {
 
     readonly user = resource({
         loader: async () => {
-            const {data, error} = await this.supabaseClient.auth.getUser();
-
-            if (error) {
-                throw error;
+            return {
+                email: "mephistorine@gmail.com"
             }
-
-            return data.user;
         },
     });
 
     openDiaryUpsertDialog(editDiary?: any) {
-        this.tuiDialogService
+        /*this.tuiDialogService
             // FIX: any
             .open<any>(DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS, {
                 data: editDiary ?? null,
@@ -146,11 +141,11 @@ export class HomePageComponent {
                 }),
                 takeUntilDestroyed(this.destroyRef),
             )
-            .subscribe();
+            .subscribe();*/
     }
 
     async logOut() {
-        await this.supabaseClient.auth.signOut();
+        // await this.supabaseClient.auth.signOut();
         await this.router.navigateByUrl(this.routerPathBuilder.login());
     }
 }

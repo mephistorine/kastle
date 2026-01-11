@@ -1,3 +1,4 @@
+import {UnitTestRunner} from "@nx/angular/src/utils/test-runners";
 import {formatFiles, Tree} from "@nx/devkit";
 import {UiGeneratorSchema} from "./schema";
 import {strings} from "@angular-devkit/core";
@@ -18,6 +19,8 @@ export async function uiGenerator(tree: Tree, options: UiGeneratorSchema) {
         buildable: Boolean(options.buildable),
         publishable: Boolean(options.publishable),
         prefix: options.prefix ?? "app",
+        unitTestRunner: "jest" as UnitTestRunner,
+        linter: "eslint",
     });
 
     await formatFiles(tree);

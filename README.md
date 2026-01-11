@@ -13,7 +13,7 @@ or run `npx nx graph` to visually explore what was created. Now, let's get you u
 
 ## Run tasks
 
-To run the dev server for your app, use:
+To run the dev serverType for your app, use:
 
 ```sh
 npx nx serve kastle

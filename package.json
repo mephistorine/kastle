@@ -7,7 +7,7 @@
         "start": "nx serve --port 4501",
         "lint": "nx lint",
         "format": "nx format:write",
-        "start:pocketbase": "pocketbase serve",
+        "start:pocketbase": "pocketbase serve --dev",
         "build": "nx build"
     },
     "overrides": {

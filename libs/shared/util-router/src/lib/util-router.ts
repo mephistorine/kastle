@@ -30,7 +30,11 @@ export class RouterPathBuilder {
         return "/login";
     }
 
-    main(){
-        return "/diaries"
+    register() {
+        return "/register"
+    }
+
+    main() {
+        return "/diaries";
     }
 }
