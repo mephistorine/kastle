@@ -23,7 +23,7 @@ import {
     TuiOptionNew,
     TuiTitle,
 } from "@taiga-ui/core";
-import {TuiAvatar, TuiSkeleton} from "@taiga-ui/kit";
+import {TuiAvatar, TuiBadge, TuiBadgedContent, TuiSkeleton} from "@taiga-ui/kit";
 import {TuiHeader} from "@taiga-ui/layout";
 import {EMPTY, switchMap} from "rxjs";
 import {Tables} from "../../../database.types";
@@ -65,6 +65,8 @@ export class AsideItemRouterLinkActiveAndButtonSyncDirective {
         RouterLinkActive,
         AsideItemRouterLinkActiveAndButtonSyncDirective,
         TuiSkeleton,
+        TuiBadgedContent,
+        TuiBadge,
     ],
     templateUrl: "./home-page.component.html",
     styleUrl: "./home-page.component.css",
