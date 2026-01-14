@@ -9,18 +9,17 @@ export async function featureGenerator(tree: Tree, options: FeatureGeneratorSche
     const domain = strings.dasherize(options.domain);
     const name = strings.dasherize(options.name);
     const libPath = `feature-${name}`;
-    const libName = `${domain}-${libPath}`;
 
     const result = await angularLibraryGenerator(tree, {
-        name: libName,
-        directory: `libs/${domain}/${libName}`,
-        importPath: makeImportPath(getOrgFromTree(tree), domain, libName),
+        name: libPath,
+        directory: `libs/${domain}/${libPath}`,
+        importPath: makeImportPath(getOrgFromTree(tree), domain, libPath),
         tags: makeTagsString(domain, "feature"),
         buildable: Boolean(options.buildable),
         publishable: Boolean(options.publishable),
         prefix: options.prefix ?? `lib-${domain}`,
         unitTestRunner: "jest" as UnitTestRunner,
-        linter: "eslint"
+        linter: "eslint",
     });
 
     await formatFiles(tree);

@@ -1,0 +1,16 @@
+{
+    "name": "domain-diary",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/diary/domain/src",
+    "projectType": "library",
+    "tags": ["domain:diary", "type:domain-logic"],
+    "targets": {
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "libs/diary/domain/jest.config.ts"
+            }
+        }
+    }
+}

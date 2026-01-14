@@ -1,2 +1,2 @@
-export * from "./lib/domain-auth";
+export * from "./lib/entities/user"
 export * from "./lib/application/auth.facade"

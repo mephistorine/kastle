@@ -61,20 +61,6 @@ export const appRoutes: Route[] = [
         component: HomePageComponent,
         // canActivate: [appMustBeConfigured, userMustBeLogged],
         title: "Home",
-        resolve: {
-            diaries: async () => {
-                const pocketbaseClient = inject(PocketbaseClient);
-                return pocketbaseClient.collection("entries").getFullList();
-                /*const supabaseClient = injectSupabaseClient();
-                const {data, error} = await supabaseClient.from("diaries").select();
-
-                if (error) {
-                    throw error;
-                }
-
-                return data;*/
-            },
-        },
         children: [
             {
                 path: "",

@@ -8,12 +8,11 @@ import {getOrgFromTree, makeImportPath, makeTagsString} from "../../index";
 export async function uiGenerator(tree: Tree, options: UiGeneratorSchema) {
     const domain = strings.dasherize(options.domain);
     const name = strings.dasherize(options.name);
-    const libPath = `ui-${name}`;
-    const libName = `${domain}-${libPath}`;
+    const libName = `ui-${name}`;
 
     const result = await angularLibraryGenerator(tree, {
         name: libName,
-        directory: `libs/${domain}/${libPath}`,
+        directory: `libs/${domain}/${libName}`,
         importPath: makeImportPath(getOrgFromTree(tree), domain, libName),
         tags: makeTagsString(domain, "ui"),
         buildable: Boolean(options.buildable),

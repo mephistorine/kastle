@@ -36,7 +36,6 @@ export class AuthFacade {
             console.log(error);
             return false
         }
-
     }
 
     setSerfhostedServerUrl(url: string) {

@@ -1,0 +1,21 @@
+{
+    "name": "feature-diary-upsert-dialog",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/diary/feature-diary-upsert-dialog/src",
+    "prefix": "lib-diary",
+    "projectType": "library",
+    "tags": ["domain:diary", "type:feature"],
+    "targets": {
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "libs/diary/feature-diary-upsert-dialog/jest.config.ts",
+                "tsConfig": "libs/diary/feature-diary-upsert-dialog/tsconfig.spec.json"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

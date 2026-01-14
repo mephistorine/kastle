@@ -6,12 +6,14 @@ import {
     Directive,
     effect,
     inject,
-    input,
     resource,
 } from "@angular/core";
-import {takeUntilDestroyed, toSignal} from "@angular/core/rxjs-interop";
+import {toSignal} from "@angular/core/rxjs-interop";
 import {ReactiveFormsModule} from "@angular/forms";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
+import {User} from "@kstl/auth/domain";
+import {FeatureDiaryUpsertDialogComponent} from "@kstl/diary/feature-diary-upsert-dialog";
+import {PocketbaseClient} from "@kstl/shared/domain";
 import {
     TuiAlertService,
     TuiAppearance,
@@ -23,13 +25,11 @@ import {
     TuiOptionNew,
     TuiTitle,
 } from "@taiga-ui/core";
-import {TuiAvatar, TuiBadge, TuiBadgedContent, TuiSkeleton} from "@taiga-ui/kit";
+import {TuiAvatar, TuiBadge, TuiBadgedContent} from "@taiga-ui/kit";
 import {TuiHeader} from "@taiga-ui/layout";
-import {EMPTY, switchMap} from "rxjs";
-import {Tables} from "../../../database.types";
-import {DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS} from "../../components/diary-upsert-dialog.component";
+import {PolymorpheusComponent} from "@taiga-ui/polymorpheus";
+import {DiaryFacade} from "../../../../../../libs/diary/domain/src/lib/application/diary.facade";
 import {RouterPathBuilder} from "../../router-path-builder.service";
-import {injectSupabaseClient} from "../../supabase";
 
 @Directive({
     selector: "[appAsideItemRouterLinkActiveSync]",
@@ -64,7 +64,6 @@ export class AsideItemRouterLinkActiveAndButtonSyncDirective {
         TuiAppearance,
         RouterLinkActive,
         AsideItemRouterLinkActiveAndButtonSyncDirective,
-        TuiSkeleton,
         TuiBadgedContent,
         TuiBadge,
     ],
@@ -78,8 +77,13 @@ export class HomePageComponent {
     private readonly destroyRef = inject(DestroyRef);
     private readonly tuiAlertService = inject(TuiAlertService);
     private readonly router = inject(Router);
+    private readonly diaryFacade = inject(DiaryFacade);
+    private readonly pocketbaseClient = inject(PocketbaseClient);
 
-    readonly diaries = input.required<Tables<"diaries">[]>();
+    readonly diaries = resource({
+        loader: () => this.pocketbaseClient.collection("diaries").getFullList<any>(),
+        defaultValue: [],
+    });
 
     readonly diaryLinks = computed(() => {
         return [
@@ -89,11 +93,11 @@ export class HomePageComponent {
                 url: this.routerPathBuilder.allEntriesPage(),
                 icon: "grid-2x2",
             },
-            ...this.diaries().map(({id, name, icon}) => ({
+            ...this.diaries.value().map(({id, name, icon}) => ({
                 id: id,
                 name: name,
                 url: this.routerPathBuilder.diaryEntries(id),
-                icon: icon,
+                icon: icon.name,
             })),
             {
                 id: -2,
@@ -104,15 +108,25 @@ export class HomePageComponent {
         ];
     });
 
-    readonly user = resource({
-        loader: async () => {
-            return {
-                email: "mephistorine@gmail.com"
-            }
-        },
-    });
+    get user() {
+        const user = this.pocketbaseClient.authStore.record as User;
+        return {
+            ...user,
+            avatarUrl:
+                user.avatar.length <= 0
+                    ? this.pocketbaseClient.files.getURL(user, user.avatar, {
+                          thumb: "50x50",
+                      })
+                    : "@tui.user",
+        };
+    }
 
     openDiaryUpsertDialog(editDiary?: any) {
+        this.tuiDialogService
+            .open(new PolymorpheusComponent(FeatureDiaryUpsertDialogComponent), {
+                data: editDiary ?? null,
+            })
+            .subscribe();
         /*this.tuiDialogService
             // FIX: any
             .open<any>(DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS, {

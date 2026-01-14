@@ -95,19 +95,14 @@
             type="button"
             [tuiDropdown]="menu"
             class="aside-button"
-            [tuiSkeleton]="user.isLoading()"
         >
             <tui-avatar
                 size="xs"
-                src="@tui.user"
+                [src]="user.avatarUrl"
             />
 
             <span>
-                @if (user.isLoading()) {
-                    {{ "johndoe@gmail.com" }}
-                } @else {
-                    {{ user.value()!.email }}
-                }
+                {{ user.email }}
             </span>
 
             <ng-template #menu>

@@ -75,6 +75,7 @@ export class FeatureLoginPageComponent {
 
     readonly serverTypeValue = createControlRawValueSignal(this.serverType);
 
+    // TODO: Add self hosted url support
     readonly selfhostedServerUrl = this.fb.control("", {
         validators: [Validators.required, Validators.minLength(1)],
         asyncValidators: [
