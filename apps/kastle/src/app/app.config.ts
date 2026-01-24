@@ -1,16 +1,14 @@
 import {
-    ApplicationConfig,
+    ApplicationConfig, inject,
     provideAppInitializer,
     provideBrowserGlobalErrorListeners,
     provideZoneChangeDetection,
 } from "@angular/core";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideRouter, withComponentInputBinding} from "@angular/router";
-import {providePocketbaseClient} from "@kstl/shared/domain";
+import {IndexedDbService, providePocketbaseClient} from "@kstl/shared/domain";
 import {provideEventPlugins} from "@taiga-ui/event-plugins";
-import {openDB} from "idb";
 import {appRoutes} from "./app.routes";
-import {injectIndexedDBContainer} from "./local-db";
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -20,23 +18,10 @@ export const appConfig: ApplicationConfig = {
         provideRouter(appRoutes, withComponentInputBinding()),
         provideEventPlugins(),
         provideAppInitializer(async () => {
-            const container = injectIndexedDBContainer();
-
-            const db = await openDB("kastle", 1, {
-                upgrade: (db) => {
-                    const filesObjectStorage = db.createObjectStore("files", {
-                        keyPath: "path",
-                    });
-
-                    filesObjectStorage.createIndex("path", "path", {
-                        unique: true,
-                    });
-                },
-            });
-
-            container.set(db as any);
-
-            return db;
+            const indexedDbService = inject(IndexedDbService);
+            return indexedDbService.initOnce([
+                "files"
+            ])
         }),
         providePocketbaseClient(import.meta.env.POCKETBASE_URL),
     ],

@@ -1,0 +1,16 @@
+{
+    "name": "domain-file",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/file/domain/src",
+    "projectType": "library",
+    "tags": ["domain:file", "type:domain-logic"],
+    "targets": {
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "libs/file/domain/jest.config.ts"
+            }
+        }
+    }
+}

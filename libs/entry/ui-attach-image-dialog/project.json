@@ -1,0 +1,21 @@
+{
+    "name": "ui-attach-image-dialog",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/entry/ui-attach-image-dialog/src",
+    "prefix": "app",
+    "projectType": "library",
+    "tags": ["domain:entry", "type:ui"],
+    "targets": {
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+            "options": {
+                "jestConfig": "libs/entry/ui-attach-image-dialog/jest.config.ts",
+                "tsConfig": "libs/entry/ui-attach-image-dialog/tsconfig.spec.json"
+            }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint"
+        }
+    }
+}

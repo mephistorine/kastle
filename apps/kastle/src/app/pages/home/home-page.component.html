@@ -45,7 +45,7 @@
                         <!--                        <tui-badge size="s" appearance="neutral">3</tui-badge>-->
                     </a>
 
-                    @if (diary.id > 0) {
+                    @if (diary.id !== "all" && diary.id !== "recently-deleted") {
                         <button
                             class="diary-actions-button"
                             appearance="flat-grayscale"

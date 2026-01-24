@@ -1,65 +1,25 @@
 import {inject} from "@angular/core";
-import {ActivatedRouteSnapshot, Route, Router} from "@angular/router";
+import {ActivatedRouteSnapshot, Route} from "@angular/router";
 import {FeatureLoginPageComponent} from "@kstl/auth/feature-login-page";
 import {FeatureRegisterPageComponent} from "@kstl/auth/feature-register-page";
+import {FeatureEntryListPageComponent} from "@kstl/entry/feature-entry-list-page";
+import {FeatureEntryUpsertComponent} from "@kstl/entry/feature-entry-upsert";
+import {FeatureSingleEntryPageComponent} from "@kstl/entry/feature-single-entry-page";
 import {PocketbaseClient} from "@kstl/shared/domain";
-import {EntriesByDiaryPage} from "./pages/home/entries-by-diary/entries-by-diary-page";
-import {EntryPageComponent} from "./pages/home/entry-page/entry-page.component";
 import {HomeEmptyPage} from "./pages/home/home-empty-page/home-empty-page";
 import {HomePageComponent} from "./pages/home/home-page.component";
-import {LoginPage} from "./pages/login/login-page";
-import {SetUp} from "./pages/set-up/set-up";
-import {injectSupabaseClient, SupabaseFactory} from "./supabase";
-import {UpsertDiaryEntryPageComponent} from "./pages/upsert-diary-entry/upsert-diary-entry-page.component";
-import { RegisterPage } from "./pages/register/register-page";
-
-const appMustBeConfigured = () => {
-    const supabaseFactory = inject(SupabaseFactory);
-    const router = inject(Router);
-    if (supabaseFactory.isSupabaseConfigured) {
-        return true;
-    }
-    return router.parseUrl("/set-up");
-};
 
 const isUserAuthed = async () => {
-    const supabaseClient = injectSupabaseClient();
-    const {data, error} = await supabaseClient.auth.getSession();
-
-    if (error) {
-        return false;
-    }
-
-    return data.session !== null;
-};
-
-const userMustBeUnlogged = async () => {
-    const router = inject(Router);
-    const isAuthed = await isUserAuthed();
-
-    if (isAuthed) {
-        return router.parseUrl("/");
-    }
-
-    return true;
-};
-
-const userMustBeLogged = async () => {
-    const router = inject(Router);
-    const isAuthed = await isUserAuthed();
-
-    if (isAuthed) {
-        return true;
-    }
-
-    return router.parseUrl("/login");
+    const pocketbaseClient = inject(PocketbaseClient);
+    return pocketbaseClient.authStore.isValid;
 };
 
 export const appRoutes: Route[] = [
     {
         path: "diaries",
         component: HomePageComponent,
-        // canActivate: [appMustBeConfigured, userMustBeLogged],
+        // TODO: Add guards
+        // canActivate: [isUserAuthed],
         title: "Home",
         children: [
             {
@@ -72,66 +32,13 @@ export const appRoutes: Route[] = [
             },*/
             {
                 path: ":diaryId/entries",
-                component: EntriesByDiaryPage,
+                component: FeatureEntryListPageComponent,
                 resolve: {
                     diary: async (route: ActivatedRouteSnapshot) => {
-                        const supabaseClient = injectSupabaseClient();
+                        const pocketbaseClient = inject(PocketbaseClient);
                         const {diaryId} = route.params;
-                        return supabaseClient
-                            .from("diaries")
-                            .select()
-                            .eq("id", diaryId)
-                            .single()
-                            .then((s) => s.data);
-                    },
-                    entries: async (route: ActivatedRouteSnapshot) => {
-                        const supabaseClient = injectSupabaseClient();
-                        const {diaryId} = route.params;
-                        const {data: entries, error: entriesError} = await supabaseClient
-                            .from("entries")
-                            .select()
-                            .eq("diary_id", diaryId)
-                            .order("created_at", {ascending: false});
-
-                        if (entriesError !== null) {
-                            throw entriesError;
-                        }
-
-                        const {data: attachments, error: entryAttachmentsError} =
-                            await supabaseClient
-                                .from("entry_attachments")
-                                .select("entry_id, attachment_path")
-                                .in(
-                                    "entry_id",
-                                    entries.map((e) => e.id),
-                                );
-
-                        if (entryAttachmentsError !== null) {
-                            throw entryAttachmentsError;
-                        }
-
-                        const attachmentPathsByEntryId = new Map<number, string[]>();
-
-                        attachments?.forEach((attachment) => {
-                            if (attachmentPathsByEntryId.has(attachment.entry_id)) {
-                                attachmentPathsByEntryId
-                                    .get(attachment.entry_id)
-                                    ?.push(attachment.attachment_path);
-                            } else {
-                                attachmentPathsByEntryId.set(attachment.entry_id, [
-                                    attachment.attachment_path,
-                                ]);
-                            }
-                        });
-
-                        return entries?.map((entry) => {
-                            return {
-                                ...entry,
-                                attachmentPaths:
-                                    attachmentPathsByEntryId.get(entry.id) ?? [],
-                            };
-                        });
-                    },
+                        return pocketbaseClient.collection("diaries").getOne(diaryId);
+                    }
                 },
             },
             {
@@ -140,7 +47,7 @@ export const appRoutes: Route[] = [
             },
             {
                 path: ":diaryId/entries/add",
-                component: UpsertDiaryEntryPageComponent,
+                component: FeatureEntryUpsertComponent,
                 resolve: {
                     entry: () => null,
                     entryAttachmentPaths: () => [],
@@ -148,66 +55,29 @@ export const appRoutes: Route[] = [
             },
             {
                 path: ":diaryId/entries/:entryId",
-                component: EntryPageComponent,
+                component: FeatureSingleEntryPageComponent,
                 resolve: {
                     entry: async (route: ActivatedRouteSnapshot) => {
-                        const {diaryId, entryId} = route.params;
-                        const supabaseClient = injectSupabaseClient();
+                        const pocketbaseClient = inject(PocketbaseClient);
+                        const {entryId} = route.params;
 
-                        const {data: attachments, error: entryAttachmentsError} =
-                            await supabaseClient
-                                .from("entry_attachments")
-                                .select("attachment_path")
-                                .eq("entry_id", entryId);
-
-                        if (entryAttachmentsError) {
-                            throw entryAttachmentsError;
-                        }
-
-                        const {data: entry, error: entriesError} = await supabaseClient
-                            .from("entries")
-                            .select()
-                            .eq("id", entryId)
-                            .eq("diary_id", diaryId)
-                            .single();
-
-                        if (entriesError) {
-                            throw entriesError;
-                        }
-
-                        Reflect.set(
-                            entry,
-                            "attachmentPaths",
-                            attachments?.map((d) => d.attachment_path),
-                        );
-
-                        return entry;
+                        return pocketbaseClient.collection("entries").getOne(entryId, {
+                            expand: "files",
+                        });
                     },
                 },
             },
             {
                 path: ":diaryId/entries/:entryId/edit",
-                component: UpsertDiaryEntryPageComponent,
+                component: FeatureEntryUpsertComponent,
                 resolve: {
                     entry: async (route: ActivatedRouteSnapshot) => {
-                        const {diaryId, entryId} = route.params;
-                        const supabaseClient = injectSupabaseClient();
-                        return supabaseClient
-                            .from("entries")
-                            .select()
-                            .eq("id", entryId)
-                            .eq("diary_id", diaryId)
-                            .single()
-                            .then(({data}) => data);
-                    },
-                    entryAttachmentPaths: async (route: ActivatedRouteSnapshot) => {
+                        const pocketbaseClient = inject(PocketbaseClient);
                         const {entryId} = route.params;
-                        const supabaseClient = injectSupabaseClient();
-                        return supabaseClient
-                            .from("entry_attachments")
-                            .select("attachment_path")
-                            .eq("entry_id", entryId)
-                            .then((s) => s.data?.map((e) => e.attachment_path) ?? null);
+
+                        return pocketbaseClient.collection("entries").getOne(entryId, {
+                            expand: "files",
+                        });
                     },
                 },
             },
@@ -224,12 +94,6 @@ export const appRoutes: Route[] = [
         component: FeatureRegisterPageComponent,
         // canActivate: [appMustBeConfigured, userMustBeUnlogged],
         title: "Registration",
-    },
-    {
-        path: "set-up",
-        component: SetUp,
-        canActivate: [],
-        title: "Set Up app",
     },
     {
         path: "**",

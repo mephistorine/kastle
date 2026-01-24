@@ -1,0 +1,31 @@
+<header tuiHeader="h5">
+    <hgroup tuiTitle>
+        <h3>{{diary().name}}</h3>
+    </hgroup>
+
+    <aside tuiAccessories>
+        <a
+            routerLink="add"
+            tuiButton
+            size="s"
+        >
+            Add
+        </a>
+    </aside>
+</header>
+
+<!-- TODO: Add empty state -->
+
+@if (isLoading()) {
+    <p>Loading...</p>
+} @else {
+    <div class="entries-container">
+        @for (entry of entries(); track entry.id) {
+            <app-ui-entry-card
+                [entry]="entry"
+            />
+        }
+    </div>
+}
+
+

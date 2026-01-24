@@ -11,7 +11,53 @@ export default [
     {
         files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs"],
         rules: {
-            "@nx/enforce-module-boundaries": ["error", {}],
+            "@nx/enforce-module-boundaries": [
+                "error",
+                {
+                    allow: [],
+                    depConstraints: [
+                        {
+                            sourceTag: "*",
+                            onlyDependOnLibsWithTags: ["*"],
+                        },
+                        {
+                            sourceTag: "type:util",
+                            onlyDependOnLibsWithTags: ["domain:shared"],
+                        },
+                        {
+                            sourceTag: "type:domain-logic",
+                            onlyDependOnLibsWithTags: ["type:domain-logic", "type:util", "domain:shared"],
+                        },
+                        {
+                            sourceTag: "type:ui",
+                            onlyDependOnLibsWithTags: ["type:domain-logic", "type:ui", "type:util", "domain:shared"],
+                        },
+                        {
+                            sourceTag: "type:feature",
+                            onlyDependOnLibsWithTags: [
+                                "type:domain-logic",
+                                "type:ui",
+                                "type:feature",
+                                "type:util",
+                                "domain:shared",
+                            ],
+                        },
+                        // TODO: Add auto import new domain tag
+                        {
+                            sourceTag: "domain:entry",
+                            onlyDependOnLibsWithTags: ["domain:entry"],
+                        },
+                        {
+                            sourceTag: "domain:diary",
+                            onlyDependOnLibsWithTags: ["domain:diary"],
+                        },
+                        {
+                            sourceTag: "domain:auth",
+                            onlyDependOnLibsWithTags: ["domain:auth"],
+                        },
+                    ],
+                },
+            ],
             "@stylistic/quotes": [
                 "error",
                 "double",

@@ -1,0 +1,74 @@
+<header>
+    <a
+        appearance="action-grayscale"
+        iconStart="chevron-left"
+        tuiLink
+        [routerLink]="backUrl()"
+    >
+        Back
+    </a>
+
+    <div tuiGroup>
+        <button
+            iconStart="smile"
+            size="s"
+            tuiIconButton
+            type="button"
+            [disabled]="true"
+        >
+            Track mood
+        </button>
+        <button
+            iconStart="map-pin-plus"
+            size="s"
+            tuiIconButton
+            type="button"
+            [disabled]="true"
+        >
+            Add some location
+        </button>
+
+        <button
+            iconStart="image"
+            size="s"
+            tuiIconButton
+            type="button"
+            (click)="attachImages()"
+        >
+            Attach images
+        </button>
+    </div>
+
+    <button
+        size="s"
+        tuiButton
+        type="button"
+        (click)="saveEntryAndGoBack()"
+    >
+        Save
+    </button>
+</header>
+
+<!--<div class="entry-attachments-container">
+    @for (attachment of attachments(); track attachment) {
+        @if (attachment.isLoading) {
+            <div [tuiSkeleton]="true" class="entry-attachment"></div>
+        } @else {
+            <img class="entry-attachment" [attr.src]="attachment.url" alt="">
+        }
+    }
+</div>-->
+
+<tui-input-inline class="entry-title-input">
+    Title
+    <input
+        type="text"
+        [formControl]="form.controls.title"
+    />
+</tui-input-inline>
+
+<tiptap-editor
+    outputFormat="json"
+    [editor]="editor"
+    [formControl]="form.controls.content"
+/>

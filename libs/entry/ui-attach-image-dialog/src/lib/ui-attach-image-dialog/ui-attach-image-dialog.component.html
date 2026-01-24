@@ -1,0 +1,27 @@
+<label tuiInputFiles>
+    <input
+        tuiInputFiles
+        [accept]="acceptedMimeTypes.join(',')"
+        [formControl]="filesControl"
+        [multiple]="true"
+    />
+</label>
+
+<div class="image-preview-container">
+    @for (file of previewFiles(); track file.fileName) {
+        <img
+            alt=""
+            class="image-preview"
+            [attr.src]="file.url"
+        />
+    }
+</div>
+
+<button
+    size="m"
+    tuiButton
+    type="button"
+    (click)="attachImages()"
+>
+    Attach
+</button>

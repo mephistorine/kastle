@@ -23,7 +23,15 @@
             "@kstl/shared/util-forms": ["libs/shared/util-forms/src/index.ts"],
             "@kstl/shared/util-router": ["libs/shared/util-router/src/index.ts"],
             "@kstl/diary/domain": ["libs/diary/domain/src/index.ts"],
-            "@kstl/diary/feature-diary-upsert-dialog": ["libs/diary/feature-diary-upsert-dialog/src/index.ts"]
+            "@kstl/diary/feature-diary-upsert-dialog": ["libs/diary/feature-diary-upsert-dialog/src/index.ts"],
+            "@kstl/entry/domain": ["libs/entry/domain/src/index.ts"],
+            "@kstl/entry/feature-entry-upsert": ["libs/entry/feature-entry-upsert/src/index.ts"],
+            "@kstl/shared/util-uniq-string": ["libs/shared/util-uniq-string/src/index.ts"],
+            "@kstl/entry/ui-attach-image-dialog": ["libs/entry/ui-attach-image-dialog/src/index.ts"],
+            "@kstl/entry/feature-single-entry-page": ["libs/entry/feature-single-entry-page/src/index.ts"],
+            "@kstl/entry/feature-entry-list-page": ["libs/entry/feature-entry-list-page/src/index.ts"],
+            "@kstl/entry/ui-entry-card": ["libs/entry/ui-entry-card/src/index.ts"],
+            "@kstl/file/domain": ["libs/file/domain/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]

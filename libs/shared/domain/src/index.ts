@@ -1,1 +1,1 @@
-export * from "./lib/domain-shared";
+export * from "./lib/infrastructure"

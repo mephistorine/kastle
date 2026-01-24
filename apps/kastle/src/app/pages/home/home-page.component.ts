@@ -12,8 +12,10 @@ import {toSignal} from "@angular/core/rxjs-interop";
 import {ReactiveFormsModule} from "@angular/forms";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {User} from "@kstl/auth/domain";
+import {DiaryFacade} from "@kstl/diary/domain";
 import {FeatureDiaryUpsertDialogComponent} from "@kstl/diary/feature-diary-upsert-dialog";
 import {PocketbaseClient} from "@kstl/shared/domain";
+import {RouterPathBuilder} from "@kstl/shared/util-router";
 import {
     TuiAlertService,
     TuiAppearance,
@@ -28,8 +30,7 @@ import {
 import {TuiAvatar, TuiBadge, TuiBadgedContent} from "@taiga-ui/kit";
 import {TuiHeader} from "@taiga-ui/layout";
 import {PolymorpheusComponent} from "@taiga-ui/polymorpheus";
-import {DiaryFacade} from "../../../../../../libs/diary/domain/src/lib/application/diary.facade";
-import {RouterPathBuilder} from "../../router-path-builder.service";
+import {lastValueFrom} from "rxjs";
 
 @Directive({
     selector: "[appAsideItemRouterLinkActiveSync]",
@@ -81,14 +82,14 @@ export class HomePageComponent {
     private readonly pocketbaseClient = inject(PocketbaseClient);
 
     readonly diaries = resource({
-        loader: () => this.pocketbaseClient.collection("diaries").getFullList<any>(),
+        loader: () => this.diaryFacade.getAll(),
         defaultValue: [],
     });
 
     readonly diaryLinks = computed(() => {
         return [
             {
-                id: -1,
+                id: "all",
                 name: "All entries",
                 url: this.routerPathBuilder.allEntriesPage(),
                 icon: "grid-2x2",
@@ -100,7 +101,7 @@ export class HomePageComponent {
                 icon: icon.name,
             })),
             {
-                id: -2,
+                id: "recently-deleted",
                 name: "Recently deleted",
                 url: this.routerPathBuilder.deletedEntries(),
                 icon: "trash",
@@ -113,7 +114,7 @@ export class HomePageComponent {
         return {
             ...user,
             avatarUrl:
-                user.avatar.length <= 0
+                user.avatar.length > 0
                     ? this.pocketbaseClient.files.getURL(user, user.avatar, {
                           thumb: "50x50",
                       })
@@ -121,43 +122,24 @@ export class HomePageComponent {
         };
     }
 
-    openDiaryUpsertDialog(editDiary?: any) {
-        this.tuiDialogService
-            .open(new PolymorpheusComponent(FeatureDiaryUpsertDialogComponent), {
-                data: editDiary ?? null,
-            })
-            .subscribe();
-        /*this.tuiDialogService
+    async openDiaryUpsertDialog(editDiary?: any) {
+        const result = await lastValueFrom(
             // FIX: any
-            .open<any>(DIARY_UPSERT_DIALOG_COMPONENT_POLYMORPHEUS, {
-                data: editDiary ?? null,
-            })
-            .pipe(
-                switchMap((data) =>
-                    this.supabaseClient.from("diaries").upsert({
-                        ...(editDiary ? {id: editDiary.id} : {}),
-                        name: data.name,
-                        accent_color: data.accentColor,
-                        icon: data.icon,
-                    }),
-                ),
-                switchMap(({error}) => {
-                    if (error) {
-                        return (
-                            this.tuiAlertService
-                                // FIX: Dont use error.message as UI error text
-                                .open(error.message, {
-                                    label: "Creation error",
-                                    appearance: "error",
-                                })
-                        );
-                    }
+            this.tuiDialogService.open<any>(
+                new PolymorpheusComponent(FeatureDiaryUpsertDialogComponent),
+                {
+                    data: editDiary ?? null,
+                },
+            ),
+        );
 
-                    return EMPTY;
-                }),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe();*/
+        // TODO: Add error catching
+        if (editDiary) {
+            await this.diaryFacade.update(result);
+            return;
+        }
+
+        await this.diaryFacade.create(result);
     }
 
     async logOut() {

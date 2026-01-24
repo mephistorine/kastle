@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 
 @Injectable({providedIn: "root"})
 export class RouterPathBuilder {
-    diaryEntries(diaryId: number) {
+    diaryEntries(diaryId: string) {
         return `/diaries/${diaryId.toString()}/entries`;
     }
 
@@ -14,15 +14,15 @@ export class RouterPathBuilder {
         return `/diaries/trash/entries`;
     }
 
-    addEntry(diaryId: number) {
+    addEntry(diaryId: string) {
         return `${this.diaryEntries(diaryId)}/add`;
     }
 
-    entryPage(diaryId: number, entryId: number) {
+    entryPage(diaryId: string, entryId: string) {
         return `${this.diaryEntries(diaryId)}/${entryId}`;
     }
 
-    editEntry(diaryId: number, entryId: number) {
+    editEntry(diaryId: string, entryId: string) {
         return `${this.diaryEntries(diaryId)}/${entryId}/edit`;
     }
 
